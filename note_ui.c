@@ -27,17 +27,13 @@ NoteWindow* create_note_window( const Note* note ) {
 	free(uppercased_title);
 	mvwprintw(window->window, 3, 2, window->note->body);
 
-	wrefresh(window->window);
-
 	window->has_changed = true;
 	return window;
 }
 
 void note_window_display( const NoteWindow* window ) {
-
-	//wnoutrefresh(win);
-	//doupdate();
-//	refresh();
+	mvwin(window->window, window->position.y, window->position.x);
+	wnoutrefresh(window->window);
 }
 
 void free_note_ui( NoteWindow* window ) {

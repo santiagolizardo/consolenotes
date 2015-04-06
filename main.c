@@ -33,12 +33,16 @@ int main( int argc, char **argv ) {
 	Note* note2;
 	note2 = create_note("cool title!", "i am just testing");
 
-	NoteListNode* root = add_node( NULL, note );
-	add_note( root, note2 );
+	Note* note3;
+	note3 = create_note("phplinux", "phplinux apapa");
 
-	while(root) {
-		print_note(root->note);
-		root = root->next;
+	NoteListNode* list = add_node( NULL, note );
+	NoteListNode* list2 = add_node( list, note2 );
+	add_node( list2, note3 );
+
+	while(list) {
+		print_note(list->note);
+		list = list->next;
 	}
 
 	initscr();
@@ -53,20 +57,33 @@ int main( int argc, char **argv ) {
 
 	bool quit = false;
 
+	refresh();
+
 	NoteWindow *noteWindow;
 	noteWindow = create_note_window(note);
 	note_window_display( noteWindow );
 
+	int seconds = 0;
 	while(!quit)
 	{
+		werase(stdscr);
+		wnoutrefresh(stdscr);
 		note_window_display( noteWindow );
-		refresh();
+		doupdate();
 		timeout(-1);
 		int ch = getch();
-		if( ch == KEY_LEFT ) -1;
-		if( ch == KEY_RIGHT ) 1;
+		if( ch == KEY_LEFT ) {
+			noteWindow->position.x -= 5;
+			mvprintw(0, 0, "left");
+		}
+		if( ch == KEY_RIGHT ) {
+			noteWindow->position.x += 5;
+			mvprintw(0, 0, "right");
+		}
+		if( ch == 'c' ) showCreateWindow();;
 		if( ch == 'q' ) quit = true;
 		if( ch == '?' ) showHelpWindow();
+		mvprintw(1, 0, "%d", seconds++);
 	}
 
 	endwin();

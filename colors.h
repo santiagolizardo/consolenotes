@@ -13,5 +13,6 @@ void init_color_schemes() {
 	init_pair(1, COLOR_BLACK, COLOR_RED);
 	init_pair(2, COLOR_BLACK, COLOR_YELLOW);
 	init_pair(3, COLOR_WHITE, COLOR_BLUE);
+	init_pair(4, COLOR_BLACK, COLOR_WHITE);
 }
 
