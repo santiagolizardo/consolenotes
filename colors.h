@@ -1,0 +1,17 @@
+
+void check_colors_support() {
+	if(has_colors() == FALSE) {
+		fprintf(stderr, "Your terminal does not support colors\n");
+		endwin();
+	}
+	start_color();
+}
+
+void init_color_schemes() {
+	init_color(COLOR_YELLOW, 1000, 1000, 600);
+
+	init_pair(1, COLOR_BLACK, COLOR_RED);
+	init_pair(2, COLOR_BLACK, COLOR_YELLOW);
+	init_pair(3, COLOR_WHITE, COLOR_BLUE);
+}
+

@@ -21,7 +21,7 @@ char *achoices[] = {
                   };
 
 
-int main()
+int main_menu()
 {	ITEM **my_items;
 	int c;				
 	MENU *my_menu;
