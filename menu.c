@@ -20,7 +20,6 @@ char *achoices[] = {
                         " )",
                   };
 
-
 int main_menu()
 {	ITEM **my_items;
 	int c;				
@@ -32,7 +31,7 @@ int main_menu()
 	cbreak();
 	noecho();
 	keypad(stdscr, TRUE);
-	
+
 	n_choices = ARRAY_SIZE(choices);
 	my_items = (ITEM **)calloc(n_choices + 1, sizeof(ITEM *));
 
@@ -77,5 +76,6 @@ int main_menu()
 	free_item(my_items[1]);
 	free_menu(my_menu);
 	endwin();
+	return 0;
 }
 

@@ -1,6 +1,8 @@
 
+SOURCES=$(wildcard *.c) $(wildcard vendor/cJSON/cJSON.c)
+
 all:
-	gcc -o cn *.c -lncurses -lpanel -lmenu
+	gcc -o cn $(SOURCES) -lncurses -lpanel -lmenu -lform
 
 clean:
 	rm cn

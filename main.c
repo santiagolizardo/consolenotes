@@ -16,34 +16,37 @@
 #include "input.h"
 #include "note_list.h"
 
+#include "filesystem.h"
+
+#include "vendor/cJSON/cJSON.h"
+
 Dimension screen_size;
 
 void resizeHandler(int);
 
 void resizeHandler(int sig) {
-	int nh, nw;
-	getmaxyx(stdscr, nh, nw);  /* get the new screen size */
+	getmaxyx(stdscr, screen_size.h, screen_size.w);
 }
 
 int main( int argc, char **argv ) {
+	NoteListNode *root = NULL, *last = NULL;
 
-	Note* note;
-	note = create_note("my title", "my note body");
+	char* json_string = read_file_content("list.json");
+	cJSON* doc = cJSON_Parse(json_string);
+	for( int i = 0; i < cJSON_GetArraySize(doc); i++ ) {
+		cJSON* child = cJSON_GetArrayItem(doc, i);
 
-	Note* note2;
-	note2 = create_note("cool title!", "i am just testing");
+		Note* n = (Note*)malloc(sizeof(Note));
+		n->title = cJSON_GetObjectItem(child, "title")->valuestring;
+		n->body = cJSON_GetObjectItem(child, "description")->valuestring;
 
-	Note* note3;
-	note3 = create_note("phplinux", "phplinux apapa");
-
-	NoteListNode* list = add_node( NULL, note );
-	NoteListNode* list2 = add_node( list, note2 );
-	add_node( list2, note3 );
-
-	while(list) {
-		print_note(list->note);
-		list = list->next;
-	}
+		if(root == NULL) {
+			root = last = add_node(NULL, n);
+		}
+		else {
+			last = add_node(last, n);
+		}
+	}	
 
 	initscr();
 
@@ -60,8 +63,15 @@ int main( int argc, char **argv ) {
 	refresh();
 
 	NoteWindow *noteWindow;
-	noteWindow = create_note_window(note);
-	note_window_display( noteWindow );
+
+	NoteListNode* list = root;
+	while(list) {
+		noteWindow = create_note_window(list->note);
+		note_window_display(noteWindow);
+
+		print_note(list->note);
+		list = list->next;
+	}
 
 	int seconds = 0;
 	while(!quit)
