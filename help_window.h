@@ -5,6 +5,7 @@
 extern Dimension screen_size;
 
 #include <form.h>
+#include <string.h>
 
 void showHelpWindow() {
 	const Dimension win_size = { 20, 40 };
@@ -30,7 +31,8 @@ void showHelpWindow() {
 	delwin(help_window);
 }
 
-void showCreateWindow() {
+Note* showCreateWindow() {
+	Note* note = NULL;
 	const Dimension win_size = { 20, 40 };
 	FIELD *field[3];
 	FORM  *my_form;
@@ -76,9 +78,12 @@ void showCreateWindow() {
 //	mvwprintw(help_window,6, 10, "Value 2:");
 	doupdate();
 
+	bool quit = false;
 	/* Loop through to get user requests */
-	while((ch = getch()) != KEY_F(1))
-	{	switch(ch)
+	while(!quit)
+	{
+		ch = getch();
+		switch(ch)
 		{	case KEY_DOWN:
 				/* Go to next field */
 				form_driver(my_form, REQ_NEXT_FIELD);
@@ -94,12 +99,19 @@ void showCreateWindow() {
 			case KEY_BACKSPACE:
 				form_driver(my_form, REQ_DEL_PREV);
 				break;
+			case '\n':
+				quit = true;
+				break;
+			case 27:
+				quit = true;
+				break;
 			default:
 				/* If this is a normal character, it gets */
 				/* Printed				  */	
 				form_driver(my_form, ch);
 				break;
 		}
+	
 //	wbkgd(help_window, COLOR_PAIR(4));
 	mvwprintw(help_window, 2, 2, "Title: " );
 	mvwprintw(help_window, 3, 2, "Body: " );
@@ -110,6 +122,17 @@ void showCreateWindow() {
 	doupdate();
 
 	}
+
+
+	if(ch == '\n') {
+	form_driver(my_form, REQ_VALIDATION);
+		note = (Note*)malloc(sizeof(Note));
+		note->title = strdup(field_buffer(field[0], 0));
+		note->body = strdup(field_buffer(field[1], 0));
+	}
+
+
+	//...
 
 	/* Un post form and free the memory */
 	unpost_form(my_form);
@@ -128,5 +151,7 @@ void showCreateWindow() {
 	doupdate();
 
 	delwin(help_window);
+	
+	return note;
 }
 

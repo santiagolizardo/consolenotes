@@ -96,7 +96,20 @@ int main( int argc, char **argv ) {
 			noteWindow->position.x += 5;
 			mvprintw(0, 0, "right");
 		}
-		if( ch == 'c' ) showCreateWindow();;
+		if( ch == 'c' ) {
+			Note* note = showCreateWindow();
+			if(note) {
+				noteWindow->note = note;
+cJSON* fmt = cJSON_CreateObject();
+cJSON_AddItemToObject(doc, "note", fmt);
+cJSON_AddStringToObject(fmt, "title", note->title);
+cJSON_AddStringToObject(fmt, "description", note->body);
+char * rendered = cJSON_Print(doc);
+write_file_content("list.json", rendered);
+cJSON_Delete(doc);
+
+			}
+		}
 		if( ch == 'q' ) quit = true;
 		if( ch == '?' ) showHelpWindow();
 		mvprintw(1, 0, "%d", seconds++);
