@@ -29,11 +29,12 @@ void resizeHandler(int sig) {
 }
 
 int main( int argc, char **argv ) {
+	int i = 0;
 	NoteListNode *root = NULL, *last = NULL;
 
 	char* json_string = read_file_content("list.json");
 	cJSON* doc = cJSON_Parse(json_string);
-	for( int i = 0; i < cJSON_GetArraySize(doc); i++ ) {
+	for( i = 0; i < cJSON_GetArraySize(doc); i++ ) {
 		cJSON* child = cJSON_GetArrayItem(doc, i);
 
 		Note* n = (Note*)malloc(sizeof(Note));
@@ -77,8 +78,13 @@ int main( int argc, char **argv ) {
 	while(!quit)
 	{
 		werase(stdscr);
+		mvwvline(stdscr, 0, 20, ACS_VLINE, LINES);
+		mvwvline(stdscr, 0, 40, ACS_VLINE, LINES);
+		mvwvline(stdscr, 0, 60, ACS_VLINE, LINES);
 		wnoutrefresh(stdscr);
+
 		note_window_display( noteWindow );
+
 		doupdate();
 		timeout(-1);
 		int ch = getch();
