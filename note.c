@@ -5,16 +5,23 @@
 #include <string.h>
 #include <time.h>
 
-Note* create_note( const char* title, const char* body ) {
+Note* malloc_note() {
 	Note* note = (Note*)malloc(sizeof(Note));
+	return note;
+}
+
+void free_note( Note* note ) {
+	free(note);
+	note = NULL;
+}
+
+Note* create_note( const char* title, const char* body ) {
+	Note* note = malloc_note();
 	note->creation_ts = time(NULL);
 	note->modification_ts = -1;
 	note->title = strdup( title );
 	note->body = strdup( body );
 	return note;
-}
-
-void delete_note( Note* note ) {
 }
 
 void print_note( const Note* note ) {

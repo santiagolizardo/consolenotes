@@ -18,7 +18,11 @@
 
 #include "filesystem.h"
 
+#include "json_note.h"
+#include "persistence.h"
 #include "vendor/cJSON/cJSON.h"
+
+#define JSON_FILENAME "list.json"
 
 Dimension screen_size;
 
@@ -31,23 +35,15 @@ void resizeHandler(int sig) {
 int main( int argc, char **argv ) {
 	int i = 0;
 	NoteListNode *root = NULL, *last = NULL;
+	cJSON* doc = NULL;
 
-	char* json_string = read_file_content("list.json");
-	cJSON* doc = cJSON_Parse(json_string);
-	for( i = 0; i < cJSON_GetArraySize(doc); i++ ) {
-		cJSON* child = cJSON_GetArrayItem(doc, i);
-
-		Note* n = (Note*)malloc(sizeof(Note));
-		n->title = cJSON_GetObjectItem(child, "title")->valuestring;
-		n->body = cJSON_GetObjectItem(child, "description")->valuestring;
-
-		if(root == NULL) {
-			root = last = add_node(NULL, n);
-		}
-		else {
-			last = add_node(last, n);
-		}
-	}	
+	if( file_exists( JSON_FILENAME ) ) {
+		doc = file_to_json(JSON_FILENAME);
+		json_to_list_node(doc, &root, &last);
+	}
+	else {
+		doc = cJSON_CreateArray();
+	}
 
 	initscr();
 
@@ -63,8 +59,9 @@ int main( int argc, char **argv ) {
 
 	refresh();
 
-	NoteWindow *noteWindow;
+	NoteWindow* noteWindow = NULL;
 
+	if(root) {
 	NoteListNode* list = root;
 	while(list) {
 		noteWindow = create_note_window(list->note);
@@ -72,6 +69,7 @@ int main( int argc, char **argv ) {
 
 		print_note(list->note);
 		list = list->next;
+	}
 	}
 
 	int seconds = 0;
@@ -83,6 +81,7 @@ int main( int argc, char **argv ) {
 		mvwvline(stdscr, 0, 60, ACS_VLINE, LINES);
 		wnoutrefresh(stdscr);
 
+		if(noteWindow)
 		note_window_display( noteWindow );
 
 		doupdate();
@@ -90,30 +89,27 @@ int main( int argc, char **argv ) {
 		int ch = getch();
 		if( ch == KEY_LEFT ) {
 			noteWindow->position.x -= 5;
-			mvprintw(0, 0, "left");
 		}
 		if( ch == KEY_RIGHT ) {
 			noteWindow->position.x += 5;
-			mvprintw(0, 0, "right");
 		}
 		if( ch == 'c' ) {
 			Note* note = showCreateWindow();
 			if(note) {
+				noteWindow = create_note_window(note);
 				noteWindow->note = note;
-cJSON* fmt = cJSON_CreateObject();
-cJSON_AddItemToObject(doc, "note", fmt);
-cJSON_AddStringToObject(fmt, "title", note->title);
-cJSON_AddStringToObject(fmt, "description", note->body);
-char * rendered = cJSON_Print(doc);
-write_file_content("list.json", rendered);
-cJSON_Delete(doc);
-
+				cJSON* json_note = note_to_json(note);
+				cJSON_AddItemToArray(doc, json_note);
+				char* rendered = cJSON_Print(doc);
+				write_file_content(JSON_FILENAME, rendered);
 			}
 		}
 		if( ch == 'q' ) quit = true;
 		if( ch == '?' ) showHelpWindow();
 		mvprintw(1, 0, "%d", seconds++);
 	}
+
+	cJSON_Delete(doc);
 
 	endwin();
 

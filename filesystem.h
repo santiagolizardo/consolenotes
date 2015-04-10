@@ -1,6 +1,12 @@
 #pragma once
 
 #include <string.h>
+#include <unistd.h>
+#include <stdbool.h>
+
+bool file_exists( const char* filename ) {
+	return access( filename, F_OK ) == 0;	
+}
 
 void write_file_content( const char* filename, const char* content ) {
 	FILE* file = fopen(filename, "w" );

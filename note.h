@@ -11,8 +11,10 @@ struct Note {
 
 typedef struct Note Note;
 
+Note* malloc_note();
+void free_note( Note* note );
+
 Note* create_note( const char* title, const char* body );
-void delete_note( Note* note );
 void print_note( const Note* note );
 void draw_note( const Note* note );
 
