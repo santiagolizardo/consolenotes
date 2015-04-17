@@ -6,19 +6,19 @@
 #define CTRLD 	4
 
 char *choices[] = {
-                        "Choice 1",
-                        "Choice 2",
-                        "Choice 3",
-                        "Choice 4",
-                        "Exit",
-                  };
+	"Choice 1",
+	"Choice 2",
+	"Choice 3",
+	"Choice 4",
+	"Exit",
+  };
 char *achoices[] = {
-                        "1)",
-                        "2)",
-                        "3)",
-                        "4)",
-                        " )",
-                  };
+	"1)",
+	"2)",
+	"3)",
+	"4)",
+	" )",
+};
 
 int main_menu()
 {	ITEM **my_items;

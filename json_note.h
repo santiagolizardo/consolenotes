@@ -17,25 +17,22 @@ Note* json_to_note( cJSON* json ) {
 		return NULL;
 	}
 	Note* note = malloc_note();
-	note->title = cJSON_GetObjectItem(json, "title")->valuestring;
-	note->body = cJSON_GetObjectItem(json, "description")->valuestring;
+	note->title = strdup(cJSON_GetObjectItem(json, "title")->valuestring);
+	note->body = strdup(cJSON_GetObjectItem(json, "description")->valuestring);
 	return note;
 }
 
-NoteListNode* json_to_list_node( cJSON* doc, NoteListNode** root, NoteListNode **last ) {
-	int i = 0,
-	    doc_len = cJSON_GetArraySize(doc);
+Note** json_to_list_node( cJSON* doc, int* notes_len ) {
+	int i = 0;
+	*notes_len = cJSON_GetArraySize(doc);
+	Note** notes = (Note**)malloc(sizeof(Note*) * *notes_len);
 
-	for(; i < doc_len; i++) {
+	for(; i < *notes_len; i++) {
 		cJSON* child = cJSON_GetArrayItem(doc, i);
 		Note* note = json_to_note(child);
-
-		if(*root == NULL) {
-			*root = *last = add_node(NULL, note);
-		}
-		else {
-			*last = add_node(*last, note);
-		}
+		notes[ i ] = note;
 	}
+
+	return notes;
 }	
 

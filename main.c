@@ -21,6 +21,9 @@
 #include "json_note.h"
 #include "persistence.h"
 #include "vendor/cJSON/cJSON.h"
+#include <time.h>
+#include <stdlib.h>
+
 
 #define JSON_FILENAME "list.json"
 
@@ -33,17 +36,20 @@ void resizeHandler(int sig) {
 }
 
 int main( int argc, char **argv ) {
-	int i = 0;
-	NoteListNode *root = NULL, *last = NULL;
-	cJSON* doc = NULL;
+	int i = 0,
+	    notes_len = 0;
+	Note** notes = NULL;
+	NoteWindow** noteWindows = NULL;
 
+	srand((unsigned int)time(NULL));
+	cJSON* doc = NULL;
 	if( file_exists( JSON_FILENAME ) ) {
 		doc = file_to_json(JSON_FILENAME);
-		json_to_list_node(doc, &root, &last);
+		notes = json_to_list_node(doc, &notes_len);
+		noteWindows = (NoteWindow**)malloc(sizeof(NoteWindow*) * notes_len);
+		cJSON_Delete(doc);
 	}
-	else {
-		doc = cJSON_CreateArray();
-	}
+	print_note(notes[0]);
 
 	initscr();
 
@@ -61,18 +67,13 @@ int main( int argc, char **argv ) {
 
 	NoteWindow* noteWindow = NULL;
 
-	if(root) {
-	NoteListNode* list = root;
-	while(list) {
-		noteWindow = create_note_window(list->note);
-		note_window_display(noteWindow);
+	int selectedNoteIndex = 0;
+	Note* selectedNote = NULL;
 
-		print_note(list->note);
-		list = list->next;
-	}
+	for(i = 0; i < notes_len; i++) {
+		noteWindows[ i ] = create_note_window(notes[ i ], screen_size);
 	}
 
-	int seconds = 0;
 	while(!quit)
 	{
 		werase(stdscr);
@@ -81,11 +82,17 @@ int main( int argc, char **argv ) {
 		mvwvline(stdscr, 0, 60, ACS_VLINE, LINES);
 		wnoutrefresh(stdscr);
 
-		if(noteWindow)
-		note_window_display( noteWindow );
+		for(i = 0; i < notes_len; i++) {
+			if(notes[i])
+				note_window_display(noteWindows[ i ], i == selectedNoteIndex);
+		}
 
 		doupdate();
 		timeout(-1);
+		if(notes_len) {
+			selectedNote = notes[ selectedNoteIndex ];
+			noteWindow = noteWindows[ selectedNoteIndex ];
+		}
 		int ch = getch();
 		if( ch == KEY_LEFT ) {
 			noteWindow->position.x -= 5;
@@ -96,22 +103,44 @@ int main( int argc, char **argv ) {
 		if( ch == 'c' ) {
 			Note* note = showCreateWindow();
 			if(note) {
-				noteWindow = create_note_window(note);
+				notes_len++;
+				notes = (Note**)realloc(notes, sizeof(Note*)*notes_len);
+				noteWindows = (NoteWindow**)realloc(noteWindows, sizeof(NoteWindow*)*notes_len);
+				NoteWindow* noteWindow = create_note_window(note, screen_size);
+				notes[notes_len-1]=note;
+				noteWindows[notes_len-1]=noteWindow;
 				noteWindow->note = note;
-				cJSON* json_note = note_to_json(note);
-				cJSON_AddItemToArray(doc, json_note);
-				char* rendered = cJSON_Print(doc);
-				write_file_content(JSON_FILENAME, rendered);
 			}
 		}
 		if( ch == 'q' ) quit = true;
 		if( ch == '?' ) showHelpWindow();
-		mvprintw(1, 0, "%d", seconds++);
+		if( ch == 'p' ) {
+			print_note(selectedNote);
+		}
+		if( ch == KEY_DC ) {
+			notes[ selectedNoteIndex ] = NULL;
+		}
+		if( ch == '\t' ) {
+			selectedNoteIndex++;
+			if(selectedNoteIndex == notes_len)
+				selectedNoteIndex = 0;
+		}
 	}
 
-	cJSON_Delete(doc);
-
 	endwin();
+
+	doc = cJSON_CreateArray();
+	for( i = 0; i < notes_len; i++ ) {
+		if(notes[ i ]) {
+			Note* note = notes[ i ];
+			cJSON* json_note = note_to_json(note);
+			cJSON_AddItemToArray(doc, json_note);
+		}
+	}
+
+	char* rendered = cJSON_Print(doc);
+	cJSON_Delete(doc);
+	write_file_content(JSON_FILENAME, rendered);
 
 	return EXIT_SUCCESS;
 }

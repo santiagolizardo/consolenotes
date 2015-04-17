@@ -5,17 +5,21 @@
 
 #include "string_utils.h"
 
+const int window_h = 20;
 const int window_w = 40;
 
-NoteWindow* create_note_window( const Note* note ) {
+#include <time.h>
+#include <stdlib.h>
+
+NoteWindow* create_note_window( const Note* note, const Dimension screen_size ) {
 	NoteWindow* window;
 	window = (NoteWindow*)malloc(sizeof(NoteWindow));
 	window->note = note;
 
-	window->position.x = 30;
-	window->position.y = 10;
+	window->position.x = ( rand() % ( screen_size.w - window_w ) );
+	window->position.y = ( rand() % ( screen_size.h - window_h ) );
 
-	window->window = newwin(20, window_w, window->position.y, window->position.x);
+	window->window = newwin(window_h, window_w, window->position.y, window->position.x);
 
 	int title_len = strlen(window->note->title);
 	wattron(window->window, COLOR_PAIR(2));
@@ -35,14 +39,14 @@ NoteWindow* create_note_window( const Note* note ) {
 	return window;
 }
 
-void note_window_display( const NoteWindow* window ) {
+void note_window_display( const NoteWindow* window, bool focused ) {
 	mvwin(window->window, window->position.y, window->position.x);
 	int title_len = strlen(window->note->title);
 	wattron(window->window, COLOR_PAIR(2));
 	char* uppercased_title = uppercase_string(window->note->title);
 	int centered_x = ( window_w >> 1 ) - ( title_len >> 1 );
 	box(window->window, 0 , 0);
-	wbkgd(window->window, COLOR_PAIR(2));
+	wbkgd(window->window, COLOR_PAIR(focused? 3:2));
 
 	wattron(window->window, A_BOLD | A_UNDERLINE);
 	mvwprintw(window->window, 1, centered_x, uppercased_title);

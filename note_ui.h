@@ -14,6 +14,6 @@ typedef struct {
 	bool has_changed;
 } NoteWindow;
 
-NoteWindow* create_note_window( const Note* note );
-void note_window_display( const NoteWindow* window );
+NoteWindow* create_note_window( const Note* note, const Dimension screen_size );
+void note_window_display( const NoteWindow* window, bool focused );
 
