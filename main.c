@@ -49,7 +49,6 @@ int main( int argc, char **argv ) {
 		noteWindows = (NoteWindow**)malloc(sizeof(NoteWindow*) * notes_len);
 		cJSON_Delete(doc);
 	}
-	print_note(notes[0]);
 
 	initscr();
 
@@ -95,10 +94,12 @@ int main( int argc, char **argv ) {
 		}
 		int ch = getch();
 		if( ch == KEY_LEFT ) {
-			noteWindow->position.x -= 5;
+			if(noteWindow->position.x > 0)
+				noteWindow->position.x -= 1;
 		}
 		if( ch == KEY_RIGHT ) {
-			noteWindow->position.x += 5;
+			if(noteWindow->position.x + window_w < screen_size.w)
+				noteWindow->position.x += 1;
 		}
 		if( ch == 'c' ) {
 			Note* note = showCreateWindow();

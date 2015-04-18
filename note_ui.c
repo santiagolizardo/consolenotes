@@ -5,9 +5,6 @@
 
 #include "string_utils.h"
 
-const int window_h = 20;
-const int window_w = 40;
-
 #include <time.h>
 #include <stdlib.h>
 

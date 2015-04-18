@@ -1,11 +1,12 @@
 
+OUTPUT=cn
 SOURCES=$(wildcard *.c) $(wildcard vendor/cJSON/cJSON.c)
 
 all:
-	gcc -o cn $(SOURCES) -lncurses -lpanel -lmenu -lform -lm
+	gcc -o $(OUTPUT) $(SOURCES) -lncurses -lpanel -lmenu -lform -lm
 
 clean:
-	rm cn
+	rm -f $(OUTPUT)
 
 .PHONY: clean
 

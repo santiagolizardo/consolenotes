@@ -112,38 +112,28 @@ Note* showCreateWindow() {
 				break;
 		}
 	
-//	wbkgd(help_window, COLOR_PAIR(4));
-	mvwprintw(help_window, 2, 2, "Title: " );
-	mvwprintw(help_window, 3, 2, "Body: " );
+		// wbkgd(help_window, COLOR_PAIR(4));
+		mvwprintw(help_window, 2, 2, "Title: " );
+		mvwprintw(help_window, 3, 2, "Body: " );
 
-	post_form(my_form);
+		post_form(my_form);
 
 		wnoutrefresh(help_window);
-	doupdate();
-
+		doupdate();
 	}
 
-
 	if(ch == '\n') {
-	form_driver(my_form, REQ_VALIDATION);
+		form_driver(my_form, REQ_VALIDATION);
 		note = (Note*)malloc(sizeof(Note));
 		note->title = strdup(field_buffer(field[0], 0));
 		note->body = strdup(field_buffer(field[1], 0));
 	}
 
-
-	//...
-
-	/* Un post form and free the memory */
 	unpost_form(my_form);
 	free_form(my_form);
 	free_field(field[0]);
 	free_field(field[1]); 
 
-	wnoutrefresh(help_window);
-	doupdate();
-	wtimeout(help_window, -1);
-	wgetch(help_window);
 	wbkgd(help_window, a);
 	wclear(help_window);
 	werase(help_window);
