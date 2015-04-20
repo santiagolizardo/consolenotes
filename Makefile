@@ -1,9 +1,10 @@
 
+CFLAGS=-02 -g
 OUTPUT=cn
 SOURCES=$(wildcard *.c) $(wildcard vendor/cJSON/cJSON.c)
 
 all:
-	gcc -o $(OUTPUT) $(SOURCES) -lncurses -lpanel -lmenu -lform -lm
+	gcc $(CFLAGS) -o $(OUTPUT) $(SOURCES) -lncurses -lpanel -lmenu -lform -lm
 
 clean:
 	rm -f $(OUTPUT)

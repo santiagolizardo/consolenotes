@@ -2,11 +2,9 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "string_utils.h"
-
-#include <time.h>
-#include <stdlib.h>
 
 NoteWindow* create_note_window( const Note* note, const Dimension screen_size ) {
 	NoteWindow* window;
