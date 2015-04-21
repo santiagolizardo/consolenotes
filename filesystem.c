@@ -16,12 +16,16 @@ void write_file_content( const char* filename, const char* content ) {
 }
 
 char* read_file_content( const char* filename) {
-	int len = sizeof(char)*1024*100;
-	char* content = (char*)malloc(len);
-	FILE* file = fopen( filename, "r");
-	memset(content, '\0', len);
-	fread(content, sizeof(char), len - 1, file);
-	fclose(file);
+	char* content = NULL;
+	FILE* file = fopen(filename, "r");
+	if(file) {
+		fseek(file, 0, SEEK_END);
+		long length = ftell(file);
+		fseek(file, 0, SEEK_SET);
+		content = (char*)malloc(sizeof(char)*length);
+		fread(content, sizeof(char), length, file);
+		fclose(file);
+	}
 	return content;
 }
 

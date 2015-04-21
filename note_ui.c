@@ -41,7 +41,7 @@ void note_window_display( const NoteWindow* window, bool focused ) {
 	char* uppercased_title = uppercase_string(window->note->title);
 	int centered_x = ( window_w >> 1 ) - ( title_len >> 1 );
 	box(window->window, 0 , 0);
-	wbkgd(window->window, COLOR_PAIR(focused? 3:2));
+	wbkgd(window->window, COLOR_PAIR(focused ? 5 : 2));
 
 	wattron(window->window, A_BOLD | A_UNDERLINE);
 	mvwprintw(window->window, 1, centered_x, uppercased_title);
@@ -51,9 +51,5 @@ void note_window_display( const NoteWindow* window, bool focused ) {
 	mvwprintw(window->window, 3, 2, window->note->body);
 
 	wnoutrefresh(window->window);
-}
-
-void free_note_ui( NoteWindow* window ) {
-//	delwin(window);
 }
 

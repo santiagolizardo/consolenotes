@@ -24,6 +24,10 @@
 
 #include "filesystem.h"
 
+#include "yesno_dialog.h"
+
+#include "agile.h"
+
 #include "json_note.h"
 #include "vendor/cJSON/cJSON.h"
 
@@ -77,14 +81,6 @@ parse_opt (int key, char *arg, struct argp_state *state)
   return 0;
 }
 static struct argp argp = { options, parse_opt, NULL, doc };
-
-void draw_lanes() {
-	int margin = screen_size.w >> 2;
-	mvwvline(stdscr, 0, margin, ACS_VLINE, LINES);
-	mvwvline(stdscr, 0, margin << 1, ACS_VLINE, LINES);
-	mvwvline(stdscr, 0, ( margin << 1 ) + margin, ACS_VLINE, LINES);
-	wnoutrefresh(stdscr);
-}
 
 int main( int argc, char **argv ) {
 	int i = 0,
@@ -149,13 +145,17 @@ int main( int argc, char **argv ) {
 			noteWindow = noteWindows[ selectedNoteIndex ];
 		}
 		int ch = getch();
-		if( ch == KEY_LEFT ) {
-			if(noteWindow->position.x > 0)
-				noteWindow->position.x -= 1;
+		if( ch == KEY_UP && noteWindow->position.y > 0) {
+			noteWindow->position.y -= 1; 
 		}
-		if( ch == KEY_RIGHT ) {
-			if(noteWindow->position.x + window_w < screen_size.w)
-				noteWindow->position.x += 1;
+		if( ch == KEY_DOWN && noteWindow->position.y + window_h < screen_size.h) {
+			noteWindow->position.y += 1; 
+		}
+		if( ch == KEY_LEFT && noteWindow->position.x > 0) {
+			noteWindow->position.x -= 1; 
+		}
+		if( ch == KEY_RIGHT && noteWindow->position.x + window_w < screen_size.w) {
+			noteWindow->position.x += 1;
 		}
 		if( ch == 'c' ) {
 			Note* note = showCreateWindow();
@@ -166,14 +166,15 @@ int main( int argc, char **argv ) {
 				
 				noteWindows = (NoteWindow**)realloc(noteWindows, sizeof(NoteWindow*)*notes_len);
 				noteWindows[ notes_len - 1 ] = noteWindow;
+				selectedNoteIndex = notes_len - 1;
 			}
 		}
-		if( ch == 'q' ) quit = true;
+		if( ch == 'q' || ch == 27 ) quit = true;
 		if( ch == '?' ) showHelpWindow();
 		if( ch == 'p' ) {
 			print_note(selectedNote);
 		}
-		if( ch == KEY_DC ) {
+		if( ch == KEY_DC && show_yesno_dialog("Do you really want to delete this note?")) {
 			noteWindows[ selectedNoteIndex ] = NULL;
 		}
 		if( ch == '\t' ) {
