@@ -161,7 +161,8 @@ int main( int argc, char **argv ) {
 			Note* note = showCreateWindow();
 			if(note) {
 				notes_len++;
-				NoteWindow* noteWindow = create_note_window(note, screen_size);
+				NoteWindow* noteWindow = create_note_window(note);
+				randomize_position(noteWindow);
 				noteWindow->note = note;
 				
 				noteWindows = (NoteWindow**)realloc(noteWindows, sizeof(NoteWindow*)*notes_len);

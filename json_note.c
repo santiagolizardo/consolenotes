@@ -5,6 +5,8 @@
 
 #include "filesystem.h"
 
+extern Dimension screen_size;
+
 cJSON* file_to_json( const char* filename ) {
 	char* json_string = read_file_content( filename );
 	cJSON* doc = cJSON_Parse(json_string);
@@ -36,7 +38,7 @@ NoteWindow* json_to_note( cJSON* json ) {
 	note->title = strdup(cJSON_GetObjectItem(json, "title")->valuestring);
 	note->body = strdup(cJSON_GetObjectItem(json, "description")->valuestring);
 
-	noteWindow = create_note_window(note, screen_size);
+	noteWindow = create_note_window(note);
 	noteWindow->position.x = cJSON_GetObjectItem(json, "x")->valueint;
 	noteWindow->position.y = cJSON_GetObjectItem(json, "y")->valueint;
 

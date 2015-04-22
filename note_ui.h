@@ -16,9 +16,11 @@ typedef struct {
 	Point position;
 	WINDOW* window;
 
-	bool has_changed;
+	bool changed;
+	bool collapsed;
 } NoteWindow;
 
-NoteWindow* create_note_window( const Note* note, const Dimension screen_size );
+NoteWindow* create_note_window( const Note* note );
 void note_window_display( const NoteWindow* window, bool focused );
+void randomize_position( NoteWindow* window );
 

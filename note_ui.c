@@ -6,13 +6,12 @@
 
 #include "string_utils.h"
 
-NoteWindow* create_note_window( const Note* note, const Dimension screen_size ) {
+extern Dimension screen_size;
+
+NoteWindow* create_note_window( const Note* note ) {
 	NoteWindow* window;
 	window = (NoteWindow*)malloc(sizeof(NoteWindow));
 	window->note = note;
-
-	window->position.x = ( rand() % ( screen_size.w - window_size.w ) );
-	window->position.y = ( rand() % ( screen_size.h - window_size.h ) );
 
 	window->window = newwin(window_size.h, window_size.w, window->position.y, window->position.x);
 
@@ -30,8 +29,13 @@ NoteWindow* create_note_window( const Note* note, const Dimension screen_size ) 
 	free(uppercased_title);
 	mvwprintw(window->window, 3, 2, window->note->body);
 
-	window->has_changed = true;
+	window->changed = true;
 	return window;
+}
+
+void randomize_position( NoteWindow* window ) {
+	window->position.x = ( rand() % ( screen_size.w - window_size.w ) );
+	window->position.y = ( rand() % ( screen_size.h - window_size.h ) );
 }
 
 void note_window_display( const NoteWindow* window, bool focused ) {
