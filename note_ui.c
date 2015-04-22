@@ -11,15 +11,15 @@ NoteWindow* create_note_window( const Note* note, const Dimension screen_size ) 
 	window = (NoteWindow*)malloc(sizeof(NoteWindow));
 	window->note = note;
 
-	window->position.x = ( rand() % ( screen_size.w - window_w ) );
-	window->position.y = ( rand() % ( screen_size.h - window_h ) );
+	window->position.x = ( rand() % ( screen_size.w - window_size.w ) );
+	window->position.y = ( rand() % ( screen_size.h - window_size.h ) );
 
-	window->window = newwin(window_h, window_w, window->position.y, window->position.x);
+	window->window = newwin(window_size.h, window_size.w, window->position.y, window->position.x);
 
 	int title_len = strlen(window->note->title);
 	wattron(window->window, COLOR_PAIR(2));
 	char* uppercased_title = uppercase_string(window->note->title);
-	int centered_x = ( window_w >> 1 ) - ( title_len >> 1 );
+	int centered_x = ( window_size.w >> 1 ) - ( title_len >> 1 );
 	box(window->window, 0 , 0);
 	wbkgd(window->window, COLOR_PAIR(2));
 
@@ -39,7 +39,7 @@ void note_window_display( const NoteWindow* window, bool focused ) {
 	int title_len = strlen(window->note->title);
 	wattron(window->window, COLOR_PAIR(2));
 	char* uppercased_title = uppercase_string(window->note->title);
-	int centered_x = ( window_w >> 1 ) - ( title_len >> 1 );
+	int centered_x = ( window_size.w >> 1 ) - ( title_len >> 1 );
 	box(window->window, 0 , 0);
 	wbkgd(window->window, COLOR_PAIR(focused ? 5 : 2));
 

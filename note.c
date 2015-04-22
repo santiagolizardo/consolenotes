@@ -5,23 +5,23 @@
 #include <string.h>
 #include <time.h>
 
-Note* malloc_note() {
+Note* new_note( bool init ) {
 	Note* note = (Note*)malloc(sizeof(Note));
+	if(init)
+		init_note(note, NULL, NULL);
 	return note;
 }
 
-void free_note( Note* note ) {
-	free(note);
-	note = NULL;
-}
-
-Note* create_note( const char* title, const char* body ) {
-	Note* note = malloc_note();
+void init_note( Note* note, const char* title, const char* body ) {
 	note->creation_ts = time(NULL);
 	note->modification_ts = -1;
-	note->title = strdup( title );
-	note->body = strdup( body );
-	return note;
+	note->title = title ? strdup(title) : NULL;
+	note->body = body ? strdup(body) : NULL;
+}
+
+void del_note( Note* note ) {
+	free(note);
+	note = NULL;
 }
 
 void print_note( const Note* note ) {

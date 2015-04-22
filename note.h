@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdbool.h>
 #include <time.h>
 
 struct Note {
@@ -11,8 +12,9 @@ struct Note {
 
 typedef struct Note Note;
 
-Note* malloc_note();
-void free_note( Note* note );
+Note* new_note( bool init );
+void init_note( Note* note, const char* title, const char* body );
+void del_note( Note* note );
 
 Note* create_note( const char* title, const char* body );
 void print_note( const Note* note );

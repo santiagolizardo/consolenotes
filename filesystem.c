@@ -23,7 +23,10 @@ char* read_file_content( const char* filename) {
 		long length = ftell(file);
 		fseek(file, 0, SEEK_SET);
 		content = (char*)malloc(sizeof(char)*length);
-		fread(content, sizeof(char), length, file);
+		if(fread(content, sizeof(char), length, file) == 0) {
+			free(content);
+			content = NULL;
+		}
 		fclose(file);
 	}
 	return content;

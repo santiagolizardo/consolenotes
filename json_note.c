@@ -16,6 +16,7 @@ cJSON* note_to_json( const Note* note, const Point position ) {
 		return NULL;
 	}
 	cJSON* json_note = cJSON_CreateObject();
+	cJSON_AddNumberToObject(json_note, "creation_ts", note->creation_ts);
 	cJSON_AddStringToObject(json_note, "title", note->title);
 	cJSON_AddStringToObject(json_note, "description", note->body);
 	cJSON_AddNumberToObject(json_note, "x", position.x);
@@ -25,16 +26,21 @@ cJSON* note_to_json( const Note* note, const Point position ) {
 }
 
 NoteWindow* json_to_note( cJSON* json ) {
-	if(json == NULL) {
-		return NULL;
-	}
-	Note* note = malloc_note();
+	NoteWindow* noteWindow = NULL;
+
+	if(json == NULL)
+		return noteWindow;
+
+	Note* note = new_note(false);
+	note->creation_ts = cJSON_GetObjectItem(json, "creation_ts")->valueint;
 	note->title = strdup(cJSON_GetObjectItem(json, "title")->valuestring);
 	note->body = strdup(cJSON_GetObjectItem(json, "description")->valuestring);
-	NoteWindow* nw = create_note_window(note, screen_size);
-	nw->position.x = cJSON_GetObjectItem(json, "x")->valueint;
-	nw->position.y = cJSON_GetObjectItem(json, "y")->valueint;
-	return nw;
+
+	noteWindow = create_note_window(note, screen_size);
+	noteWindow->position.x = cJSON_GetObjectItem(json, "x")->valueint;
+	noteWindow->position.y = cJSON_GetObjectItem(json, "y")->valueint;
+
+	return noteWindow;
 }
 
 NoteWindow** json_to_list_node( cJSON* doc, int* notes_len ) {

@@ -148,13 +148,13 @@ int main( int argc, char **argv ) {
 		if( ch == KEY_UP && noteWindow->position.y > 0) {
 			noteWindow->position.y -= 1; 
 		}
-		if( ch == KEY_DOWN && noteWindow->position.y + window_h < screen_size.h) {
+		if( ch == KEY_DOWN && noteWindow->position.y + window_size.h < screen_size.h) {
 			noteWindow->position.y += 1; 
 		}
 		if( ch == KEY_LEFT && noteWindow->position.x > 0) {
 			noteWindow->position.x -= 1; 
 		}
-		if( ch == KEY_RIGHT && noteWindow->position.x + window_w < screen_size.w) {
+		if( ch == KEY_RIGHT && noteWindow->position.x + window_size.w < screen_size.w) {
 			noteWindow->position.x += 1;
 		}
 		if( ch == 'c' ) {

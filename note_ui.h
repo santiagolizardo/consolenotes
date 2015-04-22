@@ -5,8 +5,10 @@
 
 #include <ncurses.h>
 
-static const int window_w = 40;
-static const int window_h = 20;
+static const Dimension window_size = {
+	.w = 40,
+	.h = 20
+};
 
 typedef struct {
 	const Note* note;
