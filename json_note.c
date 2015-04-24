@@ -19,8 +19,14 @@ cJSON* note_to_json( const Note* note, const Point position ) {
 	}
 	cJSON* json_note = cJSON_CreateObject();
 	cJSON_AddNumberToObject(json_note, "creation_ts", note->creation_ts);
-	cJSON_AddStringToObject(json_note, "title", note->title);
-	cJSON_AddStringToObject(json_note, "description", note->body);
+	if(note->title)
+		cJSON_AddStringToObject(json_note, "title", note->title);
+	else
+		cJSON_AddNullToObject(json_note, "title");
+	if(note->body)
+		cJSON_AddStringToObject(json_note, "description", note->body);
+	else
+		cJSON_AddNullToObject(json_note, "description");
 	cJSON_AddNumberToObject(json_note, "x", position.x);
 	cJSON_AddNumberToObject(json_note, "y", position.y);
 

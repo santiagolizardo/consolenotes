@@ -130,6 +130,7 @@ int main( int argc, char **argv ) {
 	while(!quit)
 	{
 		werase(stdscr);
+		wbkgd(stdscr,COLOR_PAIR(8));
 		
 		draw_lanes();
 

@@ -1,11 +1,12 @@
 #include "creation_window.h"
 
-#include "ui.h"
-
-extern Dimension screen_size;
-
 #include <form.h>
 #include <string.h>
+
+#include "ui.h"
+#include "string_utils.h"
+
+extern Dimension screen_size;
 
 Note* showCreateWindow() {
 	Note* note = NULL;
@@ -80,8 +81,8 @@ Note* showCreateWindow() {
 	if(ch == '\n') {
 		form_driver(form, REQ_VALIDATION);
 		note = new_note(true);
-		note->title = strdup(field_buffer(field[0], 0));
-		note->body = strdup(field_buffer(field[1], 0));
+		note->title = string_is_empty(field_buffer(field[0], 0)) ? NULL : strdup(field_buffer(field[0], 0));
+		note->body = string_is_empty(field_buffer(field[1], 0)) ? NULL : strdup(field_buffer(field[1], 0));
 	}
 
 	unpost_form(form);

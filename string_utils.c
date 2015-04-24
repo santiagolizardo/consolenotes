@@ -13,3 +13,16 @@ char* uppercase_string( const char* string ) {
 	return new_string;
 }
 
+bool string_is_empty( const char* string ) {
+	while(*string) {
+		if(*string != ' ') {
+			return false;
+		}
+		string++;
+	}
+	return true;
+}
+
+char* trim_string( const char* string ) {
+}
+

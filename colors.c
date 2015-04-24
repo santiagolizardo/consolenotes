@@ -11,7 +11,7 @@ void check_colors_support() {
 }
 
 void init_color_schemes() {
-	init_color(COLOR_YELLOW, 1000, 1000, 600);
+//	init_color(COLOR_YELLOW, 1000, 1000, 600);
 
 	init_pair(1, COLOR_BLACK, COLOR_RED);
 	init_pair(2, COLOR_BLACK, COLOR_YELLOW);
@@ -20,5 +20,6 @@ void init_color_schemes() {
 	init_pair(5, COLOR_WHITE, COLOR_MAGENTA);
 	init_pair(6, COLOR_BLACK, COLOR_CYAN);
 	init_pair(7, COLOR_WHITE, COLOR_RED);
+	init_pair(8, COLOR_WHITE, COLOR_WHITE);
 }
 
