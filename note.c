@@ -17,6 +17,7 @@ void init_note( Note* note, const char* title, const char* body ) {
 	note->modification_ts = -1;
 	note->title = title ? strdup(title) : NULL;
 	note->body = body ? strdup(body) : NULL;
+	note->archived = false;
 }
 
 void del_note( Note* note ) {
@@ -29,9 +30,10 @@ void print_note( const Note* note ) {
 		fprintf( stderr, "Attempting to print NULL note\n" );
 		return;
 	}
-	printf( "creation date/time: %s\n", ctime(&note->creation_ts) );
-	printf( "modification date/time: %s\n", note->modification_ts != -1? ctime(&note->modification_ts) : NULL );
+	printf( "creation time: %s\n", ctime(&note->creation_ts) );
+	printf( "modification time: %s\n", note->modification_ts != -1? ctime(&note->modification_ts) : NULL );
 	printf( "title: %s\n", note->title );
 	printf( "body: %s\n", note->body );
+	printf( "archived? %s\n", note->archived ? "yes" : "no" );
 }
 

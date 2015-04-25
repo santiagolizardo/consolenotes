@@ -8,6 +8,7 @@ struct Note {
 	time_t modification_ts;
 	char *title;
 	char *body;
+	bool archived;
 };
 
 typedef struct Note Note;

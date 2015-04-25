@@ -8,7 +8,7 @@
 
 extern Dimension screen_size;
 
-NoteWindow* create_note_window( const Note* note ) {
+NoteWindow* create_note_window( Note* note ) {
 	NoteWindow* window;
 	window = (NoteWindow*)malloc(sizeof(NoteWindow));
 	window->note = note;

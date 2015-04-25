@@ -11,7 +11,7 @@ static const Dimension window_size = {
 };
 
 typedef struct {
-	const Note* note;
+	Note* note;
 
 	Point position;
 	WINDOW* window;
@@ -20,7 +20,7 @@ typedef struct {
 	bool collapsed;
 } NoteWindow;
 
-NoteWindow* create_note_window( const Note* note );
+NoteWindow* create_note_window( Note* note );
 void note_window_display( const NoteWindow* window, bool focused );
 void randomize_position( NoteWindow* window );
 

@@ -82,6 +82,12 @@ parse_opt (int key, char *arg, struct argp_state *state)
 }
 static struct argp argp = { options, parse_opt, NULL, doc };
 
+void archive_current_note() {
+}
+
+void delete_current_note() {
+}
+
 int main( int argc, char **argv ) {
 	int i = 0,
 	    notes_len = 0;
@@ -135,7 +141,7 @@ int main( int argc, char **argv ) {
 		draw_lanes();
 
 		for(i = 0; i < notes_len; i++) {
-			if(noteWindows[ i ]) {
+			if(noteWindows[ i ] && !noteWindows[ i ]->note->archived) {
 				note_window_display(noteWindows[ i ], i == selectedNoteIndex);
 			}
 		}
@@ -171,13 +177,16 @@ int main( int argc, char **argv ) {
 				selectedNoteIndex = notes_len - 1;
 			}
 		}
+		if(ch == 'a' && show_yesno_dialog("Do you really want archive this note?")) {
+			archive_current_note();
+			Note* note = noteWindows[ selectedNoteIndex ]->note;
+			note->archived = true;
+		}
 		if( ch == 'q' || ch == 27 ) quit = true;
 		if( ch == '?' ) showHelpWindow();
-		if( ch == 'p' ) {
-			print_note(selectedNote);
-		}
 		if( ch == KEY_DC && show_yesno_dialog("Do you really want to delete this note?")) {
 			noteWindows[ selectedNoteIndex ] = NULL;
+			//delete_current_note();
 		}
 		if( ch == '\t' ) {
 			selectedNoteIndex++;

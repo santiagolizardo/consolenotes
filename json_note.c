@@ -19,16 +19,17 @@ cJSON* note_to_json( const Note* note, const Point position ) {
 	}
 	cJSON* json_note = cJSON_CreateObject();
 	cJSON_AddNumberToObject(json_note, "creation_ts", note->creation_ts);
-	if(note->title)
-		cJSON_AddStringToObject(json_note, "title", note->title);
-	else
-		cJSON_AddNullToObject(json_note, "title");
+	cJSON_AddStringToObject(json_note, "title", note->title);
 	if(note->body)
 		cJSON_AddStringToObject(json_note, "description", note->body);
 	else
 		cJSON_AddNullToObject(json_note, "description");
 	cJSON_AddNumberToObject(json_note, "x", position.x);
 	cJSON_AddNumberToObject(json_note, "y", position.y);
+	if(note->archived)
+		cJSON_AddTrueToObject(json_note, "archived");
+	else
+		cJSON_AddFalseToObject(json_note, "archived");
 
 	return json_note;
 }
@@ -44,6 +45,7 @@ NoteWindow* json_to_note( cJSON* json ) {
 	note->title = strdup(cJSON_GetObjectItem(json, "title")->valuestring);
 	cJSON* json_description = cJSON_GetObjectItem(json, "description");
 	note->body = json_description->type == cJSON_NULL ? NULL : strdup( json_description->valuestring );
+	note->archived = cJSON_GetObjectItem(json, "archived")->type == cJSON_True;
 
 	noteWindow = create_note_window(note);
 	noteWindow->position.x = cJSON_GetObjectItem(json, "x")->valueint;
