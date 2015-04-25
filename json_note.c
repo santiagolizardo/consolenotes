@@ -42,7 +42,8 @@ NoteWindow* json_to_note( cJSON* json ) {
 	Note* note = new_note(false);
 	note->creation_ts = cJSON_GetObjectItem(json, "creation_ts")->valueint;
 	note->title = strdup(cJSON_GetObjectItem(json, "title")->valuestring);
-	note->body = strdup(cJSON_GetObjectItem(json, "description")->valuestring);
+	cJSON* json_description = cJSON_GetObjectItem(json, "description");
+	note->body = json_description->type == cJSON_NULL ? NULL : strdup( json_description->valuestring );
 
 	noteWindow = create_note_window(note);
 	noteWindow->position.x = cJSON_GetObjectItem(json, "x")->valueint;

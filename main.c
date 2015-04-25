@@ -197,7 +197,8 @@ int main( int argc, char **argv ) {
 		}
 	}
 
-	char* rendered = cJSON_Print(doc);
+//	char* rendered = cJSON_Print(doc);
+	char* rendered = cJSON_PrintUnformatted(doc);
 	cJSON_Delete(doc);
 	write_file_content(JSON_FILENAME, rendered);
 

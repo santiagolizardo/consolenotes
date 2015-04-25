@@ -14,7 +14,6 @@ Note* showCreateWindow() {
 	FIELD *field[3];
 	FORM  *form;
 	int ch;
-	
 	int rows, cols;
       
 	field[0] = new_field(1, 13, 1, 14, 0, 0);
@@ -81,8 +80,11 @@ Note* showCreateWindow() {
 	if(ch == '\n') {
 		form_driver(form, REQ_VALIDATION);
 		note = new_note(true);
-		note->title = string_is_empty(field_buffer(field[0], 0)) ? NULL : strdup(field_buffer(field[0], 0));
-		note->body = string_is_empty(field_buffer(field[1], 0)) ? NULL : strdup(field_buffer(field[1], 0));
+		char* field_value = NULL;
+		field_value = field_buffer(field[0], 0);
+		note->title = string_is_empty(field_buffer(field[0], 0)) ? NULL : trim_string(field_value);
+		field_value = field_buffer(field[1], 0);
+		note->body = string_is_empty(field_buffer(field[1], 0)) ? NULL : trim_string(field_value);
 	}
 
 	unpost_form(form);

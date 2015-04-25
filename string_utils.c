@@ -24,5 +24,12 @@ bool string_is_empty( const char* string ) {
 }
 
 char* trim_string( const char* string ) {
+	size_t len = strlen(string);
+	int begin = 0;
+	while(string[begin] == ' ')
+		begin++;
+	while(string[len-1] == ' ')
+		len--;
+	return strndup(string+begin, len-begin);
 }
 
