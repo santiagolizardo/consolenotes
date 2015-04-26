@@ -164,6 +164,10 @@ int main( int argc, char **argv ) {
 		if( ch == KEY_RIGHT && noteWindow->position.x + window_size.w < screen_size.w) {
 			noteWindow->position.x += 1;
 		}
+		if(ch == ' ') {
+			Note* note = noteWindows[ selectedNoteIndex ]->note;
+			note->toggled = !note->toggled;
+		}
 		if( ch == 'c' ) {
 			Note* note = showCreateWindow();
 			if(note) {

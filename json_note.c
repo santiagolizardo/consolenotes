@@ -30,6 +30,10 @@ cJSON* note_to_json( const Note* note, const Point position ) {
 		cJSON_AddTrueToObject(json_note, "archived");
 	else
 		cJSON_AddFalseToObject(json_note, "archived");
+	if(note->toggled)
+		cJSON_AddTrueToObject(json_note, "toggled");
+	else
+		cJSON_AddFalseToObject(json_note, "toggled");
 
 	return json_note;
 }
@@ -46,6 +50,8 @@ NoteWindow* json_to_note( cJSON* json ) {
 	cJSON* json_description = cJSON_GetObjectItem(json, "description");
 	note->body = json_description->type == cJSON_NULL ? NULL : strdup( json_description->valuestring );
 	note->archived = cJSON_GetObjectItem(json, "archived")->type == cJSON_True;
+	cJSON* json_toggled = cJSON_GetObjectItem(json, "toggled");
+	note->toggled = json_toggled && json_toggled->type == cJSON_True;
 
 	noteWindow = create_note_window(note);
 	noteWindow->position.x = cJSON_GetObjectItem(json, "x")->valueint;

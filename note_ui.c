@@ -39,21 +39,27 @@ void randomize_position( NoteWindow* window ) {
 }
 
 void note_window_display( const NoteWindow* window, bool focused ) {
-	mvwin(window->window, window->position.y, window->position.x);
+	werase(window->window);
+	wbkgd(window->window, COLOR_PAIR(focused ? 5 : 2));
 	int title_len = strlen(window->note->title);
-	wattron(window->window, COLOR_PAIR(2));
 	char* uppercased_title = uppercase_string(window->note->title);
 	int centered_x = ( window_size.w >> 1 ) - ( title_len >> 1 );
-	box(window->window, 0 , 0);
-	wbkgd(window->window, COLOR_PAIR(focused ? 5 : 2));
 
 	wattron(window->window, A_BOLD | A_UNDERLINE);
 	mvwprintw(window->window, 1, centered_x, uppercased_title);
 	wattroff(window->window, A_BOLD | A_UNDERLINE);
-
 	free(uppercased_title);
-	mvwprintw(window->window, 3, 2, window->note->body);
 
+	if(window->note->toggled) {
+		wresize(window->window, 3, window_size.w);
+	}
+	else {
+		wresize(window->window, window_size.h, window_size.w);
+		mvwprintw(window->window, 3, 2, window->note->body);
+	}
+
+	mvwin(window->window, window->position.y, window->position.x);
+	box(window->window, 0 , 0);
 	wnoutrefresh(window->window);
 }
 
