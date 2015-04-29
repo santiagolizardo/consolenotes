@@ -102,8 +102,14 @@ int main( int argc, char **argv ) {
 
 	initscr();
 
-	check_colors_support();
+	if(has_colors() == FALSE) {
+		fprintf(stderr, "Your terminal does not support colors\n");
+		endwin();
+		return EXIT_FAILURE;
+	}
+	start_color();
 	init_color_schemes();
+
 	initialize_input();
 
 	signal(SIGWINCH, resizeHandler);

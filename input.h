@@ -1,7 +1,4 @@
+#pragma once
 
-void initialize_input() {
-	noecho();
-	curs_set(FALSE);
-	keypad(stdscr, TRUE);
-}
+void initialize_input( void );
 

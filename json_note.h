@@ -7,8 +7,6 @@
 #include "note_ui.h"
 #include "ui.h"
 
-extern Dimension screen_size;
-
 cJSON* file_to_json( const char* filename );
 
 cJSON* note_to_json( const Note* note );

@@ -2,7 +2,7 @@
 
 #include <stdbool.h>
 
-char* uppercase_string( const char* string );
-bool string_is_empty( const char* string );
-char* trim_string( const char* string );
+char* uppercase_string( const char* );
+bool string_is_empty( const char* );
+char* trim_string( const char* );
 

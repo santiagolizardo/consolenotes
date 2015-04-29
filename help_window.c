@@ -5,6 +5,8 @@
 
 #include "ui.h"
 
+extern Dimension screen_size;
+
 void showHelpWindow() {
 	const Dimension win_size = {
 		.w = 40,
