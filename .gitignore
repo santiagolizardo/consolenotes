@@ -2,3 +2,4 @@ cn
 *.exe
 list.json
 *.stackdump
+*.dSYM

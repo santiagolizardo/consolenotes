@@ -6,12 +6,15 @@
 #include "note.h"
 #include "note_ui.h"
 #include "ui.h"
+#include "note_link.h"
 
-cJSON* file_to_json( const char* filename );
+cJSON* file_to_json( const char* );
 
-cJSON* note_to_json( const Note* note );
+cJSON* note_to_json( const Note* );
 
-Note* json_to_note( cJSON* json );
+cJSON* link_list_to_json( const NoteLink* );
 
-Note** json_to_list_node( cJSON* doc, int* notes_len );
+Note* json_to_note( cJSON* );
+
+NoteLink* json_to_list_node( cJSON* );
 

@@ -16,6 +16,7 @@
 #include "ui.h"
 #include "note.h"
 #include "note_ui.h"
+#include "note_link.h"
 #include "creation_window.h"
 #include "help_window.h"
 #include "colors.h"
@@ -31,6 +32,8 @@
 #include "vendor/cJSON/cJSON.h"
 
 #define JSON_FILENAME "list.json"
+
+const bool print_formatted = true;
 
 const char *argp_program_version = "ConsoleNotes 1.0";
 const char *argp_program_bug_address = "http://github.com/santiagolizardo/consolenotes/";
@@ -88,12 +91,11 @@ void delete_current_note() {
 }
 
 int main( int argc, char **argv ) {
-	int i = 0,
-	    notes_len = 0;
-	Note** notes = NULL;
+	int i = 0;
+	NoteLink* notes = NULL;
 
-	  struct arguments arguments;
-	  arguments.list = 0;
+	struct arguments arguments;
+	arguments.list = 0;
 
 	argp_parse (&argp, argc, argv, 0, 0, &arguments);
 
@@ -121,44 +123,71 @@ int main( int argc, char **argv ) {
 
 	refresh();
 
-	Note* note = NULL;
+	NoteLink* selected_link = NULL;
 
-	int selectedNoteIndex = 0;
 	if( file_exists( JSON_FILENAME ) ) {
 		doc = file_to_json(JSON_FILENAME);
-		notes = json_to_list_node(doc, &notes_len);
+		notes = json_to_list_node(doc);
 		cJSON_Delete(doc);
 	}
 
 	if(arguments.list) {
 		endwin();
-		for(i = 0; i < notes_len; i++) {
-			print_note(notes[ i ]);
-		}
+		print_all_note_links(notes);
 		exit(0);
 	}
 
 	while(!quit)
 	{
+		selected_link = NULL;
+
 		werase(stdscr);
 		
 		draw_lanes();
 
-		for(i = 0; i < notes_len; i++) {
-			if(notes[ i ] && !notes[ i ]->archived) {
-				notes[ i ]->focused = i == selectedNoteIndex;
-				create_note_window(notes[i]);
-				note_window_display(notes[ i ]);
+		NoteLink* link = notes;
+		NoteLink* last = link;
+		Note* note = link->note;
+		while(link) {
+			last = link;
+			Note* note = link->note;
+			if(note->focused)
+				selected_link = link;
+			if(!note->archived) {
+				create_note_window(note);
+				note_window_display(note);
 			}
+			link = link->next;
+		}
+
+		if(!selected_link && notes) {
+			selected_link = notes;
+			selected_link->note->focused = true;
 		}
 
 		doupdate();
 		timeout(-1);
-		if(notes_len) {
-			note = notes[ selectedNoteIndex ];
-		}
-		Note* note = notes[ selectedNoteIndex ];
 		int ch = getch();
+		if( ch == '+' && selected_link->next ) {
+			if(selected_link->prev)
+				selected_link->prev->next = selected_link->next;
+			selected_link->next->prev = selected_link->prev;
+			if(selected_link == notes)
+				notes = selected_link->next;
+			selected_link->prev = last;
+			last->next = selected_link;
+			selected_link->next = NULL;
+		}
+		if( ch == '-' && selected_link->prev ) {
+			selected_link->prev->next = selected_link->next;
+			if(selected_link->next)
+				selected_link->next->prev = selected_link->prev;
+			selected_link->prev = NULL;
+			selected_link->next = notes;
+			notes = selected_link;
+		}
+		if(selected_link)
+			note = selected_link->note;
 		if( ch == KEY_UP && note->window.position.y > 0) {
 			note->window.position.y -= 1; 
 		}
@@ -175,50 +204,54 @@ int main( int argc, char **argv ) {
 			note->toggled = !note->toggled;
 		}
 		if( ch == 'c' ) {
-			Note* note = showCreateWindow();
-			if(note) {
-				create_note_window(note);
-				notes_len++;
-				randomize_position(note);
+			Note* new_note = showCreateWindow();
+			if(new_note) {
+				create_note_window(new_note);
+				randomize_position(new_note);
 				
-				notes = (Note**)realloc(notes, sizeof(Note*)*notes_len);
-				notes[ notes_len - 1 ] = note;
-				selectedNoteIndex = notes_len - 1;
+				NoteLink* new_link = new_note_link();
+				new_link->note = new_note;
+				new_link->prev = last;
+				last->next = new_link;
+				selected_link = new_link;
 			}
 		}
 		if(ch == 'a' && show_yesno_dialog("Do you really want archive this note?")) {
 			archive_current_note();
-			Note* note = notes[ selectedNoteIndex ];
-			note->archived = true;
+			if(selected_link)
+				selected_link->note->archived = true;
 		}
 		if( ch == 'q' || ch == 27 ) quit = true;
 		if( ch == '?' ) showHelpWindow();
 		if( ch == KEY_DC && show_yesno_dialog("Do you really want to delete this note?")) {
-			notes[ selectedNoteIndex ] = NULL;
-			//delete_current_note();
+			if(selected_link->prev) {
+				selected_link->prev->next = selected_link->next;
+			}
+			if(selected_link->next) {
+				selected_link->next->prev = selected_link->prev;
+			}
 		}
 		if( ch == '\t' ) {
-			selectedNoteIndex++;
-			if(selectedNoteIndex == notes_len)
-				selectedNoteIndex = 0;
+			selected_link->note->focused = false;
+			if(selected_link->next) {
+				selected_link = selected_link->next;
+			}
+			else
+			{
+				selected_link = notes;
+			}
+			selected_link->note->focused = true;
 		}
 	}
 
 	endwin();
 
-	doc = cJSON_CreateArray();
-	for( i = 0; i < notes_len; i++ ) {
-		if(notes[ i ]) {
-			Note* note = notes[ i ];
-			cJSON* json_note = note_to_json(note);
-			cJSON_AddItemToArray(doc, json_note);
-		}
-	}
+	cJSON* updated_doc = link_list_to_json(notes);
+	char* printable_doc = print_formatted ? cJSON_Print(updated_doc) : cJSON_PrintUnformatted(updated_doc);
+	cJSON_Delete(updated_doc);
 
-//	char* rendered = cJSON_Print(doc);
-	char* rendered = cJSON_PrintUnformatted(doc);
-	cJSON_Delete(doc);
-	write_file_content(JSON_FILENAME, rendered);
+	write_file_content(JSON_FILENAME, printable_doc);
+	free(printable_doc);
 
 	return EXIT_SUCCESS;
 }

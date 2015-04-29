@@ -34,6 +34,11 @@ cJSON* note_to_json( const Note* note ) {
 		cJSON_AddTrueToObject(json_note, "toggled");
 	else
 		cJSON_AddFalseToObject(json_note, "toggled");
+	if(note->focused)
+		cJSON_AddTrueToObject(json_note, "focused");
+	else
+		cJSON_AddFalseToObject(json_note, "focused");
+
 
 	return json_note;
 }
@@ -52,6 +57,8 @@ Note* json_to_note( cJSON* json ) {
 	note->archived = cJSON_GetObjectItem(json, "archived")->type == cJSON_True;
 	cJSON* json_toggled = cJSON_GetObjectItem(json, "toggled");
 	note->toggled = json_toggled && json_toggled->type == cJSON_True;
+	cJSON* json_focused = cJSON_GetObjectItem(json, "focused");
+	note->focused = json_focused && json_focused->type == cJSON_True;
 
 	note->window.position.x = cJSON_GetObjectItem(json, "x")->valueint;
 	note->window.position.y = cJSON_GetObjectItem(json, "y")->valueint;
@@ -59,20 +66,43 @@ Note* json_to_note( cJSON* json ) {
 	return note;
 }
 
-Note** json_to_list_node( cJSON* doc, int* notes_len ) {
-	int i;
-	*notes_len = cJSON_GetArraySize(doc);
-	Note** notes = (Note**)malloc(sizeof(Note*) * *notes_len);
-	if(notes == NULL) {
-		perror("malloc");
-		exit(1);
-	}
-	for(i = 0; i < *notes_len; i++) {
+NoteLink* json_to_list_node( cJSON* doc ) {
+	NoteLink *first = NULL, *last = NULL;
+
+	int notes_len = cJSON_GetArraySize(doc),
+	    i = 0;
+	for(; i < notes_len; i++) {
 		cJSON* child = cJSON_GetArrayItem(doc, i);
 		Note* note = json_to_note(child);
-		notes[ i ] = note;
+
+		NoteLink* current = new_note_link();
+		current->note = note;
+		current->prev = last;
+
+		if(!first) {
+			first = current;
+		}
+		else {
+			last->next = current;
+		}
+
+		last = current;
 	}
 
-	return notes;
+	return first;
 }	
+
+cJSON* link_list_to_json( const NoteLink* list ) {
+	cJSON* doc = cJSON_CreateArray();
+	
+	const NoteLink* current = list;
+	while(current) {
+		Note* note = current->note;
+		cJSON* json_note = note_to_json(note);
+		cJSON_AddItemToArray(doc, json_note);
+		current = current->next;
+	}
+
+	return doc;
+}
 
