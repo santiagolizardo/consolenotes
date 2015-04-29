@@ -13,7 +13,7 @@ cJSON* file_to_json( const char* filename ) {
 	return doc;
 }
 
-cJSON* note_to_json( const Note* note, const Point position ) {
+cJSON* note_to_json( const Note* note ) {
 	if(note == NULL) {
 		return NULL;
 	}
@@ -24,8 +24,8 @@ cJSON* note_to_json( const Note* note, const Point position ) {
 		cJSON_AddStringToObject(json_note, "description", note->body);
 	else
 		cJSON_AddNullToObject(json_note, "description");
-	cJSON_AddNumberToObject(json_note, "x", position.x);
-	cJSON_AddNumberToObject(json_note, "y", position.y);
+	cJSON_AddNumberToObject(json_note, "x", note->window.position.x);
+	cJSON_AddNumberToObject(json_note, "y", note->window.position.y);
 	if(note->archived)
 		cJSON_AddTrueToObject(json_note, "archived");
 	else
@@ -38,13 +38,13 @@ cJSON* note_to_json( const Note* note, const Point position ) {
 	return json_note;
 }
 
-NoteWindow* json_to_note( cJSON* json ) {
-	NoteWindow* noteWindow = NULL;
+Note* json_to_note( cJSON* json ) {
+	Note* note = NULL;
 
 	if(json == NULL)
-		return noteWindow;
+		return note;
 
-	Note* note = new_note(false);
+	note = new_note(false);
 	note->creation_ts = cJSON_GetObjectItem(json, "creation_ts")->valueint;
 	note->title = strdup(cJSON_GetObjectItem(json, "title")->valuestring);
 	cJSON* json_description = cJSON_GetObjectItem(json, "description");
@@ -53,24 +53,23 @@ NoteWindow* json_to_note( cJSON* json ) {
 	cJSON* json_toggled = cJSON_GetObjectItem(json, "toggled");
 	note->toggled = json_toggled && json_toggled->type == cJSON_True;
 
-	noteWindow = create_note_window(note);
-	noteWindow->position.x = cJSON_GetObjectItem(json, "x")->valueint;
-	noteWindow->position.y = cJSON_GetObjectItem(json, "y")->valueint;
+	note->window.position.x = cJSON_GetObjectItem(json, "x")->valueint;
+	note->window.position.y = cJSON_GetObjectItem(json, "y")->valueint;
 
-	return noteWindow;
+	return note;
 }
 
-NoteWindow** json_to_list_node( cJSON* doc, int* notes_len ) {
+Note** json_to_list_node( cJSON* doc, int* notes_len ) {
 	int i;
 	*notes_len = cJSON_GetArraySize(doc);
-	NoteWindow** notes = (NoteWindow**)malloc(sizeof(NoteWindow*) * *notes_len);
+	Note** notes = (Note**)malloc(sizeof(Note*) * *notes_len);
 	if(notes == NULL) {
 		perror("malloc");
 		exit(1);
 	}
 	for(i = 0; i < *notes_len; i++) {
 		cJSON* child = cJSON_GetArrayItem(doc, i);
-		NoteWindow* note = json_to_note(child);
+		Note* note = json_to_note(child);
 		notes[ i ] = note;
 	}
 

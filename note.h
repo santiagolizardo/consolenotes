@@ -2,6 +2,9 @@
 
 #include <stdbool.h>
 #include <time.h>
+#include <ncurses.h>
+
+#include "ui.h"
 
 struct Note {
 	time_t creation_ts;
@@ -10,6 +13,12 @@ struct Note {
 	char *body;
 	bool archived;
 	bool toggled;
+	bool focused;
+
+	struct {
+		Point position;
+		WINDOW* handler;
+	} window;
 };
 
 typedef struct Note Note;

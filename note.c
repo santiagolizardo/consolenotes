@@ -5,6 +5,7 @@
 #include <string.h>
 #include <time.h>
 
+
 Note* new_note( bool init ) {
 	Note* note = (Note*)malloc(sizeof(Note));
 	if(init)
@@ -19,6 +20,8 @@ void init_note( Note* note, const char* title, const char* body ) {
 	note->body = body ? strdup(body) : NULL;
 	note->archived = false;
 	note->toggled = false;
+
+	note->window.handler = NULL;
 }
 
 void del_note( Note* note ) {

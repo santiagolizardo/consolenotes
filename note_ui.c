@@ -8,58 +8,42 @@
 
 extern Dimension screen_size;
 
-NoteWindow* create_note_window( Note* note ) {
-	NoteWindow* window;
-	window = (NoteWindow*)malloc(sizeof(NoteWindow));
-	window->note = note;
-
-	window->window = newwin(window_size.h, window_size.w, window->position.y, window->position.x);
-
-	int title_len = strlen(window->note->title);
-	wattron(window->window, COLOR_PAIR(2));
-	char* uppercased_title = uppercase_string(window->note->title);
-	int centered_x = ( window_size.w >> 1 ) - ( title_len >> 1 );
-	box(window->window, 0 , 0);
-	wbkgd(window->window, COLOR_PAIR(2));
-
-	wattron(window->window, A_BOLD | A_UNDERLINE);
-	mvwprintw(window->window, 1, centered_x, uppercased_title);
-	wattroff(window->window, A_BOLD | A_UNDERLINE);
-
-	free(uppercased_title);
-	mvwprintw(window->window, 3, 2, window->note->body);
-
-	window->changed = true;
-	return window;
+void create_note_window( Note* note ) {
+	if(note->window.handler == NULL)
+		note->window.handler = newwin(window_size.h, window_size.w, note->window.position.y, note->window.position.x);
 }
 
-void randomize_position( NoteWindow* window ) {
-	window->position.x = ( rand() % ( screen_size.w - window_size.w ) );
-	window->position.y = ( rand() % ( screen_size.h - window_size.h ) );
+void randomize_position( Note* note ) {
+	note->window.position.x = ( rand() % ( screen_size.w - window_size.w ) );
+	note->window.position.y = ( rand() % ( screen_size.h - window_size.h ) );
 }
 
-void note_window_display( const NoteWindow* window, bool focused ) {
-	werase(window->window);
-	wbkgd(window->window, COLOR_PAIR(focused ? 5 : 2));
-	int title_len = strlen(window->note->title);
-	char* uppercased_title = uppercase_string(window->note->title);
+void note_window_display( const Note* note ) {
+	if(note->window.handler == NULL) {
+		// @todo log error
+		return;
+	}
+	werase(note->window.handler);
+	wbkgd(note->window.handler, COLOR_PAIR(note->focused ? 5 : 2));
+	int title_len = strlen(note->title);
+	char* uppercased_title = uppercase_string(note->title);
 	int centered_x = ( window_size.w >> 1 ) - ( title_len >> 1 );
 
-	wattron(window->window, A_BOLD | A_UNDERLINE);
-	mvwprintw(window->window, 1, centered_x, uppercased_title);
-	wattroff(window->window, A_BOLD | A_UNDERLINE);
+	wattron(note->window.handler, A_BOLD | A_UNDERLINE);
+	mvwprintw(note->window.handler, 1, centered_x, uppercased_title);
+	wattroff(note->window.handler, A_BOLD | A_UNDERLINE);
 	free(uppercased_title);
 
-	if(window->note->toggled) {
-		wresize(window->window, 3, window_size.w);
+	if(note->toggled || note->body == NULL) {
+		wresize(note->window.handler, 3, window_size.w);
 	}
 	else {
-		wresize(window->window, window_size.h, window_size.w);
-		mvwprintw(window->window, 3, 2, window->note->body);
+		wresize(note->window.handler, window_size.h, window_size.w);
+		mvwprintw(note->window.handler, 3, 2, note->body);
 	}
 
-	mvwin(window->window, window->position.y, window->position.x);
-	box(window->window, 0 , 0);
-	wnoutrefresh(window->window);
+	mvwin(note->window.handler, note->window.position.y, note->window.position.x);
+	box(note->window.handler, 0 , 0);
+	wnoutrefresh(note->window.handler);
 }
 

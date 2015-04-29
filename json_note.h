@@ -11,9 +11,9 @@ extern Dimension screen_size;
 
 cJSON* file_to_json( const char* filename );
 
-cJSON* note_to_json( const Note* note, const Point position );
+cJSON* note_to_json( const Note* note );
 
-NoteWindow* json_to_note( cJSON* json );
+Note* json_to_note( cJSON* json );
 
-NoteWindow** json_to_list_node( cJSON* doc, int* notes_len );
+Note** json_to_list_node( cJSON* doc, int* notes_len );
 

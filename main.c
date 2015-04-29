@@ -20,7 +20,6 @@
 #include "help_window.h"
 #include "colors.h"
 #include "input.h"
-#include "note_list.h"
 
 #include "filesystem.h"
 
@@ -91,7 +90,7 @@ void delete_current_note() {
 int main( int argc, char **argv ) {
 	int i = 0,
 	    notes_len = 0;
-	NoteWindow** noteWindows = NULL;
+	Note** notes = NULL;
 
 	  struct arguments arguments;
 	  arguments.list = 0;
@@ -110,25 +109,25 @@ int main( int argc, char **argv ) {
 	signal(SIGWINCH, resizeHandler);
 
 	getmaxyx(stdscr, screen_size.h, screen_size.w);
+	wbkgd(stdscr, COLOR_PAIR(8));
 
 	bool quit = false;
 
 	refresh();
 
-	NoteWindow* noteWindow = NULL;
+	Note* note = NULL;
 
 	int selectedNoteIndex = 0;
-	Note* selectedNote = NULL;
 	if( file_exists( JSON_FILENAME ) ) {
 		doc = file_to_json(JSON_FILENAME);
-		noteWindows = json_to_list_node(doc, &notes_len);
+		notes = json_to_list_node(doc, &notes_len);
 		cJSON_Delete(doc);
 	}
 
 	if(arguments.list) {
 		endwin();
 		for(i = 0; i < notes_len; i++) {
-			print_note(noteWindows[ i ]->note);
+			print_note(notes[ i ]);
 		}
 		exit(0);
 	}
@@ -136,60 +135,60 @@ int main( int argc, char **argv ) {
 	while(!quit)
 	{
 		werase(stdscr);
-		wbkgd(stdscr,COLOR_PAIR(8));
 		
 		draw_lanes();
 
 		for(i = 0; i < notes_len; i++) {
-			if(noteWindows[ i ] && !noteWindows[ i ]->note->archived) {
-				note_window_display(noteWindows[ i ], i == selectedNoteIndex);
+			if(notes[ i ] && !notes[ i ]->archived) {
+				notes[ i ]->focused = i == selectedNoteIndex;
+				create_note_window(notes[i]);
+				note_window_display(notes[ i ]);
 			}
 		}
 
 		doupdate();
 		timeout(-1);
 		if(notes_len) {
-			noteWindow = noteWindows[ selectedNoteIndex ];
+			note = notes[ selectedNoteIndex ];
 		}
+		Note* note = notes[ selectedNoteIndex ];
 		int ch = getch();
-		if( ch == KEY_UP && noteWindow->position.y > 0) {
-			noteWindow->position.y -= 1; 
+		if( ch == KEY_UP && note->window.position.y > 0) {
+			note->window.position.y -= 1; 
 		}
-		if( ch == KEY_DOWN && noteWindow->position.y + window_size.h < screen_size.h) {
-			noteWindow->position.y += 1; 
+		if( ch == KEY_DOWN && note->window.position.y + window_size.h < screen_size.h) {
+			note->window.position.y += 1; 
 		}
-		if( ch == KEY_LEFT && noteWindow->position.x > 0) {
-			noteWindow->position.x -= 1; 
+		if( ch == KEY_LEFT && note->window.position.x > 0) {
+			note->window.position.x -= 1; 
 		}
-		if( ch == KEY_RIGHT && noteWindow->position.x + window_size.w < screen_size.w) {
-			noteWindow->position.x += 1;
+		if( ch == KEY_RIGHT && note->window.position.x + window_size.w < screen_size.w) {
+			note->window.position.x += 1;
 		}
 		if(ch == ' ') {
-			Note* note = noteWindows[ selectedNoteIndex ]->note;
 			note->toggled = !note->toggled;
 		}
 		if( ch == 'c' ) {
 			Note* note = showCreateWindow();
 			if(note) {
+				create_note_window(note);
 				notes_len++;
-				NoteWindow* noteWindow = create_note_window(note);
-				randomize_position(noteWindow);
-				noteWindow->note = note;
+				randomize_position(note);
 				
-				noteWindows = (NoteWindow**)realloc(noteWindows, sizeof(NoteWindow*)*notes_len);
-				noteWindows[ notes_len - 1 ] = noteWindow;
+				notes = (Note**)realloc(notes, sizeof(Note*)*notes_len);
+				notes[ notes_len - 1 ] = note;
 				selectedNoteIndex = notes_len - 1;
 			}
 		}
 		if(ch == 'a' && show_yesno_dialog("Do you really want archive this note?")) {
 			archive_current_note();
-			Note* note = noteWindows[ selectedNoteIndex ]->note;
+			Note* note = notes[ selectedNoteIndex ];
 			note->archived = true;
 		}
 		if( ch == 'q' || ch == 27 ) quit = true;
 		if( ch == '?' ) showHelpWindow();
 		if( ch == KEY_DC && show_yesno_dialog("Do you really want to delete this note?")) {
-			noteWindows[ selectedNoteIndex ] = NULL;
+			notes[ selectedNoteIndex ] = NULL;
 			//delete_current_note();
 		}
 		if( ch == '\t' ) {
@@ -203,9 +202,9 @@ int main( int argc, char **argv ) {
 
 	doc = cJSON_CreateArray();
 	for( i = 0; i < notes_len; i++ ) {
-		if(noteWindows[ i ]) {
-			NoteWindow* noteWindow = noteWindows[ i ];
-			cJSON* json_note = note_to_json(noteWindow->note, noteWindow->position);
+		if(notes[ i ]) {
+			Note* note = notes[ i ];
+			cJSON* json_note = note_to_json(note);
 			cJSON_AddItemToArray(doc, json_note);
 		}
 	}

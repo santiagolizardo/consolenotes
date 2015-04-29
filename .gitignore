@@ -1,3 +1,4 @@
 cn
 *.exe
 list.json
+*.stackdump
