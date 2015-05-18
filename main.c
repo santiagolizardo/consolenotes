@@ -59,6 +59,8 @@ void resizeHandler(int);
 
 void resizeHandler(int sig) {
 	getmaxyx(stdscr, screen_size.h, screen_size.w);
+	wnoutrefresh(stdscr);
+	doupdate();
 }
 
 static error_t
@@ -147,7 +149,7 @@ int main( int argc, char **argv ) {
 
 		NoteLink* link = notes;
 		NoteLink* last = link;
-		Note* note = link->note;
+		Note* note = NULL; 
 		while(link) {
 			last = link;
 			Note* note = link->note;
@@ -188,20 +190,26 @@ int main( int argc, char **argv ) {
 		}
 		if(selected_link)
 			note = selected_link->note;
-		if( ch == KEY_UP && note->window.position.y > 0) {
-			note->window.position.y -= 1; 
-		}
-		if( ch == KEY_DOWN && note->window.position.y + window_size.h < screen_size.h) {
-			note->window.position.y += 1; 
-		}
-		if( ch == KEY_LEFT && note->window.position.x > 0) {
-			note->window.position.x -= 1; 
-		}
-		if( ch == KEY_RIGHT && note->window.position.x + window_size.w < screen_size.w) {
-			note->window.position.x += 1;
-		}
-		if(ch == ' ') {
-			note->toggled = !note->toggled;
+		if(note) {
+			if( ch == KEY_UP && note->window.position.y > 0) {
+				note->window.position.y -= 1; 
+			}
+			if( ch == KEY_DOWN && note->window.position.y + window_size.h < screen_size.h) {
+				note->window.position.y += 1; 
+			}
+			if( ch == KEY_LEFT && note->window.position.x > 0) {
+				note->window.position.x -= 1; 
+			}
+			if( ch == KEY_RIGHT && note->window.position.x + window_size.w < screen_size.w) {
+				note->window.position.x += 1;
+			}
+			if(ch == ' ') {
+				note->toggled = !note->toggled;
+			}
+			if(ch == 'a' && show_yesno_dialog("Do you really want archive this note?")) {
+				archive_current_note();
+				selected_link->note->archived = true;
+			}
 		}
 		if( ch == 'c' ) {
 			Note* new_note = showCreateWindow();
@@ -216,11 +224,6 @@ int main( int argc, char **argv ) {
 				selected_link = new_link;
 			}
 		}
-		if(ch == 'a' && show_yesno_dialog("Do you really want archive this note?")) {
-			archive_current_note();
-			if(selected_link)
-				selected_link->note->archived = true;
-		}
 		if( ch == 'q' || ch == 27 ) quit = true;
 		if( ch == '?' ) showHelpWindow();
 		if( ch == KEY_DC && show_yesno_dialog("Do you really want to delete this note?")) {
@@ -229,6 +232,10 @@ int main( int argc, char **argv ) {
 			}
 			if(selected_link->next) {
 				selected_link->next->prev = selected_link->prev;
+			}
+			if(selected_link == notes) {
+				selected_link = NULL;
+				notes = NULL;
 			}
 		}
 		if( ch == '\t' ) {
