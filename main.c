@@ -220,8 +220,11 @@ int main( int argc, char **argv ) {
 				NoteLink* new_link = new_note_link();
 				new_link->note = new_note;
 				new_link->prev = last;
-				last->next = new_link;
+				if(last)
+					last->next = new_link;
 				selected_link = new_link;
+				if(!notes)
+					notes = selected_link;
 			}
 		}
 		if( ch == 'q' || ch == 27 ) quit = true;
