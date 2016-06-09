@@ -8,16 +8,16 @@
 
 extern Dimension screen_size;
 
-Note* showCreateWindow() {
+Note* showCreateWindow(void) {
 	Note* note = NULL;
-	const Dimension win_size = { 20, 40 };
+	Dimension win_size;
 	FIELD *field[3];
 	FORM  *form;
 	int ch;
 	int rows, cols;
       
-	field[0] = new_field(1, 13, 1, 14, 0, 0);
-	field[1] = new_field(3, 13, 2, 14, 0, 0);
+	field[0] = new_field(1, 37, 1, 14, 0, 0);
+	field[1] = new_field(7, 37, 2, 14, 0, 0);
 	field[2] = NULL;
 
 //	set_field_fore(field[0], COLOR_PAIR(4)); 
@@ -31,17 +31,19 @@ Note* showCreateWindow() {
 	form = new_form(field);
 
 	scale_form(form, &rows, &cols);
+    win_size.w = cols + 4;
+    win_size.h = rows + 4;
 
-	WINDOW *window = newwin(rows +4,cols+4, 10, (screen_size.w>>1)-(win_size.w>>1));
-	WINDOW* otherwin = derwin(window, rows, cols, 1, 1);
+	WINDOW *window = newwin(win_size.h, win_size.w, 10, (screen_size.w >> 1) - (win_size.w >> 1));
+	WINDOW* form_win = derwin(window, rows, cols, 1, 1);
 	set_form_win(form, window);
-	set_form_sub(form, otherwin);
+	set_form_sub(form, form_win);
 
 	box(window, 0, 0);
 	//wborder(window, ACS_VLINE, ACS_VLINE, ACS_HLINE, ACS_HLINE, ACS_ULCORNER, ACS_URCORNER, ACS_LLCORNER, ACS_LRCORNER );
 	chtype a = getbkgd(window);
 	wbkgd(window, COLOR_PAIR(4));
-	wbkgd(otherwin, COLOR_PAIR(4));
+	wbkgd(form_win, COLOR_PAIR(4));
 
 	bool quit = false;
 	while(!quit)
@@ -52,9 +54,11 @@ Note* showCreateWindow() {
 		wrefresh(window);
 
 		wtimeout(window, 0);
-		ch = getch();
+		ch = wgetch(window);
 		switch(ch)
-		{	case KEY_DOWN:
+		{
+            case '\t':
+            case KEY_DOWN:
 				form_driver(form, REQ_NEXT_FIELD);
 				form_driver(form, REQ_END_LINE);
 				break;
@@ -63,6 +67,7 @@ Note* showCreateWindow() {
 				form_driver(form, REQ_END_LINE);
 				break;
 			case KEY_BACKSPACE:
+			case 127:
 				form_driver(form, REQ_DEL_PREV);
 				break;
 			case '\n':

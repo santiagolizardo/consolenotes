@@ -23,7 +23,7 @@ bool show_yesno_dialog( const char* message ) {
 	wrefresh(window);
 	wtimeout(window, 0);
 	int ch = getch();
-	answer = ch == 'y' || ch == 'Y';
+	answer = (ch == 'y' || ch == 'Y' || ch == '\n');
 
 	delwin(window);
 

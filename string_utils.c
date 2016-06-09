@@ -2,14 +2,16 @@
 
 #include <string.h>
 #include <ctype.h>
+#include <stdlib.h>
 
 char* uppercase_string( const char* string ) {
-	char* new_string = strdup( string );
-	int i = 0;
 	size_t string_len = strlen(string);
+	char* new_string = (char*)malloc(sizeof(char) * string_len + 1);
+	size_t i = 0;
 	for(; i < string_len; i++) {
 		new_string[i] = toupper(string[i]);
 	}
+    new_string[i] = '\0';
 	return new_string;
 }
 
