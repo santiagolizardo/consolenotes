@@ -1,5 +1,5 @@
 
-CFLAGS=-O2 -g
+CFLAGS=-O0 -g
 OUTPUT=cn
 SOURCES=$(wildcard *.c) $(wildcard vendor/cJSON/cJSON.c)
 
