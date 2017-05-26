@@ -10,6 +10,10 @@ OSTYPE=$(shell echo $$OSTYPE)
 ifeq ("$(OSTYPE)", "cygwin")
 	LIBS+= -largp
 endif
+ifeq ("$(OSTYPE)", "darwin16")
+	CFLAGS+= -I/usr/local/include -L/usr/local/lib
+	LIBS+= -largp
+endif
 
 all:
 	gcc $(CFLAGS) -o $(OUTPUT) $(SOURCES) $(LIBS) 
