@@ -3,7 +3,7 @@ CFLAGS=-O3 -g -Wall -pedantic
 OUTPUT=cn
 SOURCES=$(wildcard *.c) $(wildcard vendor/cJSON/cJSON.c)
 
-LIBS=-lncurses -lpanel -lmenu -lform -lm
+LIBS=-lncurses -lpanel -lmenu -lform -lm -largp
 
 OSTYPE=$(shell echo $$OSTYPE)
 

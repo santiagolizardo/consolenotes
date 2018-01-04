@@ -27,8 +27,6 @@
 
 #include "yesno_dialog.h"
 
-#include "agile.h"
-
 #include "json_note.h"
 #include "vendor/cJSON/cJSON.h"
 
@@ -37,15 +35,15 @@
 const bool print_formatted = true;
 
 const char *argp_program_version = "ConsoleNotes 1.0";
-const char *argp_program_bug_address = "http://github.com/santiagolizardo/consolenotes/";
+const char *argp_program_bug_address = "https://github.com/santiagolizardo/consolenotes/";
 
 static char doc[] = "ConsoleNotes is a simple program to manage and display sticky notes on the terminal";
 
 static struct argp_option options[] = {
-  {"verbose",  'v', 0,      0,  "Produce verbose output" },
-  {"list",    'l', 0,      0,  "List all the notes" },
-  {"print",   'p', 0,      OPTION_ALIAS },
-  { 0 }
+	{"verbose",  'v', 0,      0,  "Produce verbose output" },
+	{"list",    'l', 0,      0,  "List all the notes" },
+	{"print",   'p', 0,      OPTION_ALIAS },
+	{NULL}
 };
 
 
@@ -105,15 +103,26 @@ void delete_current_note(NoteLink* selected_link, NoteLink** notes) {
 }
 
 int main( int argc, char **argv ) {
-	NoteLink* notes = NULL;
-
 	struct arguments arguments;
 	arguments.list = 0;
 
 	argp_parse (&argp, argc, argv, 0, 0, &arguments);
 
 	srand((unsigned int)time(NULL));
+
+	NoteLink* notes = NULL;
 	cJSON* doc = NULL;
+
+	if( file_exists( JSON_FILENAME ) ) {
+		doc = file_to_json(JSON_FILENAME);
+		notes = json_to_list_node(doc);
+		cJSON_Delete(doc);
+	}
+
+	if(arguments.list) {
+		print_all_note_links(notes);
+		exit(EXIT_SUCCESS);
+	}
 
 	initscr();
 
@@ -138,26 +147,13 @@ int main( int argc, char **argv ) {
 
 	NoteLink* selected_link = NULL;
 
-	if( file_exists( JSON_FILENAME ) ) {
-		doc = file_to_json(JSON_FILENAME);
-		notes = json_to_list_node(doc);
-		cJSON_Delete(doc);
-	}
-
-	if(arguments.list) {
-		endwin();
-		print_all_note_links(notes);
-		exit(0);
-	}
-
 	while(!quit)
 	{
 		selected_link = NULL;
 
 		werase(stdscr);
+		wnoutrefresh(stdscr);
 		
-		draw_lanes();
-
 		NoteLink* link = notes;
 		NoteLink* last = link;
 		Note* note = NULL; 

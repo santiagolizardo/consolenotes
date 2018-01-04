@@ -25,7 +25,7 @@ void note_window_display( const Note* note ) {
 	}
 	werase(note->window.handler);
 	wbkgd(note->window.handler, COLOR_PAIR(note->focused ? 5 : 2));
-	int title_len = strlen(note->title);
+	size_t title_len = strlen(note->title);
 	char* uppercased_title = uppercase_string(note->title);
 	int centered_x = ( window_size.w >> 1 ) - ( title_len >> 1 );
 
