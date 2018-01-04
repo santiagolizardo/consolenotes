@@ -25,7 +25,6 @@ int main_menu()
 	int c;				
 	MENU *my_menu;
 	int n_choices, i;
-	ITEM *cur_item;
 	
 	initscr();
 	cbreak();

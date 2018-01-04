@@ -8,18 +8,35 @@
 extern Dimension screen_size;
 
 void showHelpWindow() {
+	const struct {
+		const char shortcut[5];
+		const char description[50];
+	} entries[10] = {
+		{"c", 		"Create new note"},
+		{"e", 		"Edit selected note"},
+		{"g", 		"Go to note"},
+		{"", 		""},
+		{"PgUp", 	"Previus note"},
+		{"PgDn", 	"Next note"},
+		{"", 		""},
+		{"?", 		"This help"},
+		{"", 		""},
+		{"q", 		"Quit application"},
+	};
+	const size_t num_entries = 10;
+
 	const Dimension win_size = {
 		.w = 40,
-		.h = 10
+		.h = num_entries + 4
 	};
 
 	WINDOW *window = newwin(win_size.h, win_size.w, 10, (screen_size.w>>1)-(win_size.w>>1));
-	wborder(window, '|', '|', '-', '-', '+', '+', '?', '+' );
+	wborder(window, '|', '|', '-', '-', '+', '?', '+', '+' );
 	wbkgd(window, COLOR_PAIR(3));
 
-	mvwprintw(window, 2, 2, "c Create new note" );
-	mvwprintw(window, 3, 2, "? This help" );
-	mvwprintw(window, 5, 2, "q Quit application" );
+	for(size_t i = 0; i < num_entries; i++) {
+		mvwprintw(window, 2 + i, 2, "%-05s %s", entries[i].shortcut, entries[i].description);
+	}
 	wrefresh(window);
 
 	wtimeout(window, -1);

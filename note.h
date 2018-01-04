@@ -29,6 +29,5 @@ void del_note( Note* note );
 
 Note* create_note( const char* title, const char* body );
 void print_note( const Note* note );
-static inline const char* format_yesno_value( bool value );
 void draw_note( const Note* note );
 

@@ -13,6 +13,7 @@
 #include <time.h>
 #include <stdlib.h>
 
+#include <form.h>
 #include "ui.h"
 #include "note.h"
 #include "note_ui.h"
@@ -86,14 +87,24 @@ parse_opt (int key, char *arg, struct argp_state *state)
 }
 static struct argp argp = { options, parse_opt, NULL, doc };
 
-void archive_current_note() {
+void archive_current_note(NoteLink* selected_link) {
+	selected_link->note->archived = true;
 }
 
-void delete_current_note() {
+void delete_current_note(NoteLink* selected_link, NoteLink** notes) {
+	if(selected_link->prev) {
+		selected_link->prev->next = selected_link->next;
+	}
+	if(selected_link->next) {
+		selected_link->next->prev = selected_link->prev;
+	}
+	if(selected_link == *notes) {
+		selected_link = NULL;
+		*notes = NULL;
+	}
 }
 
 int main( int argc, char **argv ) {
-	int i = 0;
 	NoteLink* notes = NULL;
 
 	struct arguments arguments;
@@ -207,9 +218,55 @@ int main( int argc, char **argv ) {
 				note->toggled = !note->toggled;
 			}
 			if(ch == 'a' && show_yesno_dialog("Do you really want archive this note?")) {
-				archive_current_note();
-				selected_link->note->archived = true;
+				archive_current_note(selected_link);
 			}
+		}
+		if(ch == 'g') {
+			FIELD *field[2];
+			FORM  *form;
+			Dimension win_size;
+			int rows, cols;
+			field[0] = new_field(1, 37, 1, 14, 0, 0);
+			field[1] = NULL;
+			form = new_form(field);
+			scale_form(form, &rows, &cols);
+    		win_size.w = cols + 4;
+    		win_size.h = rows + 4;
+
+			WINDOW *window = newwin(win_size.h, win_size.w, 10, (screen_size.w >> 1) - (win_size.w >> 1));
+			WINDOW* form_win = derwin(window, rows, cols, 1, 1);
+			set_form_win(form, window);
+			set_form_sub(form, form_win);
+			bool quit = false;
+			while(!quit)
+			{
+				post_form(form);
+				mvwprintw(window, 2, 2, "Title: " );
+				wrefresh(window);
+				wtimeout(window, 0);
+				ch = wgetch(window);
+				switch(ch) {
+					case '\n':
+						quit = true;
+						break;
+					default:
+						form_driver(form, ch);
+						break;
+				}
+			}
+			form_driver(form, REQ_VALIDATION);
+			char* field_value = NULL;
+			field_value = field_buffer(field[0], 0);
+
+			mvwprintw(stdscr, 2, 2, "Title: %s", field_value );
+			unpost_form(form);
+			free_form(form);
+			free_field(field[0]);
+
+			//wbkgd(window, a);
+			wclear(window);
+			
+			delwin(window);
 		}
 		if( ch == 'c' ) {
 			Note* new_note = showCreateWindow();
@@ -227,27 +284,27 @@ int main( int argc, char **argv ) {
 					notes = selected_link;
 			}
 		}
-		if( ch == 'q' || ch == 27 ) quit = true;
+		if( ch == 'q' || ch == 27 ) {
+			quit = true;
+		}
 		if( ch == '?' ) showHelpWindow();
 		if( ch == KEY_DC && show_yesno_dialog("Do you really want to delete this note?")) {
-			if(selected_link->prev) {
-				selected_link->prev->next = selected_link->next;
-			}
-			if(selected_link->next) {
-				selected_link->next->prev = selected_link->prev;
-			}
-			if(selected_link == notes) {
-				selected_link = NULL;
-				notes = NULL;
-			}
+			delete_current_note(selected_link, &notes);
 		}
-		if( ch == '\t' ) {
+		if( ch == KEY_PPAGE ) {
+			selected_link->note->focused = false;
+			if(selected_link->prev) {
+				selected_link = selected_link->prev;
+			} else {
+				selected_link = notes;
+			}
+			selected_link->note->focused = true;
+		}
+		if( ch == KEY_NPAGE ) {
 			selected_link->note->focused = false;
 			if(selected_link->next) {
 				selected_link = selected_link->next;
-			}
-			else
-			{
+			} else {
 				selected_link = notes;
 			}
 			selected_link->note->focused = true;

@@ -20,11 +20,8 @@ Note* showCreateWindow(void) {
 	field[1] = new_field(7, 37, 2, 14, 0, 0);
 	field[2] = NULL;
 
-//	set_field_fore(field[0], COLOR_PAIR(4)); 
 	set_field_back(field[0], COLOR_PAIR(4) | A_UNDERLINE); 
-//	set_field_back(field[0], A_UNDERLINE); 	/* Print a line for the option 	*/
-	field_opts_off(field[0], O_AUTOSKIP);  	/* Don't go to next field when this */
-						/* Field is filled up 		*/
+	field_opts_off(field[0], O_AUTOSKIP);
 	set_field_back(field[1], A_UNDERLINE); 
 	field_opts_off(field[1], O_AUTOSKIP);
 
@@ -40,7 +37,6 @@ Note* showCreateWindow(void) {
 	set_form_sub(form, form_win);
 
 	box(window, 0, 0);
-	//wborder(window, ACS_VLINE, ACS_VLINE, ACS_HLINE, ACS_HLINE, ACS_ULCORNER, ACS_URCORNER, ACS_LLCORNER, ACS_LRCORNER );
 	chtype a = getbkgd(window);
 	wbkgd(window, COLOR_PAIR(4));
 	wbkgd(form_win, COLOR_PAIR(4));

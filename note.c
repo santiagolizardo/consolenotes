@@ -5,6 +5,9 @@
 #include <string.h>
 #include <time.h>
 
+static const char* format_yesno_value( bool value ) {
+	return value ? "yes" : "no";
+}
 
 Note* new_note( bool init ) {
 	Note* note = (Note*)malloc(sizeof(Note));
@@ -40,9 +43,5 @@ void print_note( const Note* note ) {
 	printf( "body: %s\n", note->body );
 	printf( "archived? %s\n", format_yesno_value( note->archived ) );
 	printf( "toggled? %s\n", format_yesno_value( note->toggled ) );
-}
-
-const char* format_yesno_value( bool value ) {
-	return value ? "yes" : "no";
 }
 

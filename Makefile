@@ -1,5 +1,5 @@
 
-CFLAGS=-O0 -g
+CFLAGS=-O3 -g -Wall -pedantic
 OUTPUT=cn
 SOURCES=$(wildcard *.c) $(wildcard vendor/cJSON/cJSON.c)
 
