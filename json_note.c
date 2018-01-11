@@ -53,7 +53,7 @@ Note* json_to_note( cJSON* json ) {
 	note->creation_ts = cJSON_GetObjectItem(json, "creation_ts")->valueint;
 	note->title = strdup(cJSON_GetObjectItem(json, "title")->valuestring);
 	cJSON* json_description = cJSON_GetObjectItem(json, "description");
-	note->body = json_description->type == cJSON_NULL ? NULL : strdup( json_description->valuestring );
+	note->body = json_description == NULL || json_description->type == cJSON_NULL ? NULL : strdup( json_description->valuestring );
 	note->archived = cJSON_GetObjectItem(json, "archived")->type == cJSON_True;
 	cJSON* json_toggled = cJSON_GetObjectItem(json, "toggled");
 	note->toggled = json_toggled && json_toggled->type == cJSON_True;

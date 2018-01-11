@@ -7,6 +7,7 @@
 #include "ui.h"
 
 struct Note {
+	size_t index;
 	time_t creation_ts;
 	time_t modification_ts;
 	char *title;

@@ -8,7 +8,7 @@
 
 extern Dimension screen_size;
 
-Note* showCreateWindow(void) {
+Note* show_create_window(void) {
 	Note* note = NULL;
 	Dimension win_size;
 	FIELD *field[3];

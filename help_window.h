@@ -1,4 +1,4 @@
 #pragma once
 
-void showHelpWindow( void );
+void show_help_window( void );
 

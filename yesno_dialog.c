@@ -7,7 +7,7 @@
 
 extern Dimension screen_size;
 
-bool show_yesno_dialog( const char* message ) {
+bool show_yesno_dialog(const char * const message) {
 	bool answer = false;
 	Dimension win_size = {
 		.w = strlen(message) + 4,

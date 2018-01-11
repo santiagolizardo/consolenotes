@@ -7,7 +7,7 @@
 
 extern Dimension screen_size;
 
-void showHelpWindow() {
+void show_help_window() {
 	const struct {
 		const char shortcut[5];
 		const char description[50];

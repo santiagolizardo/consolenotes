@@ -2,5 +2,5 @@
 
 #include "note.h"
 
-Note* showCreateWindow(void);
+Note* show_create_window(void);
 

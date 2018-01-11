@@ -4,7 +4,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-char* uppercase_string( const char* string ) {
+char* uppercase_string(const char * const string) {
 	size_t string_len = strlen(string);
 	char* new_string = (char*)malloc(sizeof(char) * string_len + 1);
 	size_t i = 0;
@@ -15,7 +15,7 @@ char* uppercase_string( const char* string ) {
 	return new_string;
 }
 
-bool string_is_empty( const char* string ) {
+bool string_is_empty(const char * string) {
 	while(*string) {
 		if(*string != ' ') {
 			return false;
@@ -25,7 +25,7 @@ bool string_is_empty( const char* string ) {
 	return true;
 }
 
-char* trim_string( const char* string ) {
+char* trim_string(const char * const string) {
 	size_t len = strlen(string);
 	int begin = 0;
 	while(string[begin] == ' ')

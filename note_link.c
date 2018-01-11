@@ -24,3 +24,11 @@ void print_note_link( const NoteLink* link ) {
 	getch();
 }
 
+size_t count_notes(const NoteLink* note_list_head) {
+	size_t count = 0;
+	while(note_list_head) {
+		count++;
+		note_list_head = note_list_head->next;
+	}
+	return count;
+}
