@@ -159,7 +159,28 @@ void goto_note(NoteLink** selected_link_ptr, NoteLink* note_list_head) {
 		wtimeout(window, 0);
 		int ch = wgetch(window);
 		switch(ch) {
+			case 27:
+				quit = true;
+				break;
 			case '\n':
+				form_driver(form, REQ_VALIDATION);
+				char* field_value = NULL;
+				field_value = strdup(field_buffer(field[0], 0));
+				int index = atoi(field_value);
+				if(index < count_notes(note_list_head)) {
+					selected_link->note->focused = false;
+					NoteLink* first = note_list_head;
+					size_t count = 0;
+					while(first) {
+						first->note->focused = index == count;
+						if(index == count) {
+							selected_link = first;
+						}
+						first = first->next;
+						count++;
+					}
+				}
+
 				quit = true;
 				break;
 			default:
@@ -167,23 +188,7 @@ void goto_note(NoteLink** selected_link_ptr, NoteLink* note_list_head) {
 				break;
 		}
 	}
-	form_driver(form, REQ_VALIDATION);
-	char* field_value = NULL;
-	field_value = strdup(field_buffer(field[0], 0));
-	int index = atoi(field_value);
-	if(index < count_notes(note_list_head)) {
-		selected_link->note->focused = false;
-		NoteLink* first = note_list_head;
-		size_t count = 0;
-		while(first) {
-			first->note->focused = index == count;
-			if(index == count) {
-				selected_link = first;
-			}
-			first = first->next;
-			count++;
-		}
-	}
+
 	unpost_form(form);
 	free_form(form);
 	free_field(field[0]);
@@ -206,7 +211,9 @@ void create_new_note(NoteLink** selected_link, NoteLink** note_list_head, NoteLi
 		if(note_list_tail) {
 			note_list_tail->next = new_link;
 		}
-		(*selected_link)->note->focused = false;
+		if(*selected_link) {
+			(*selected_link)->note->focused = false;
+		}
 		*selected_link = new_link;
 		if(!*note_list_head) {
 			*note_list_head = *selected_link;

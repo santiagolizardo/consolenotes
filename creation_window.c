@@ -67,6 +67,14 @@ Note* show_create_window(void) {
 				form_driver(form, REQ_DEL_PREV);
 				break;
 			case '\n':
+				form_driver(form, REQ_VALIDATION);
+				note = new_note(true);
+				char* field_value = NULL;
+				field_value = field_buffer(field[0], 0);
+				note->title = string_is_empty(field_buffer(field[0], 0)) ? NULL : trim_string(field_value);
+				field_value = field_buffer(field[1], 0);
+				note->body = string_is_empty(field_buffer(field[1], 0)) ? NULL : trim_string(field_value);
+
 				quit = true;
 				break;
 			case 27:
@@ -76,16 +84,6 @@ Note* show_create_window(void) {
 				form_driver(form, ch);
 				break;
 		}
-	}
-
-	if(ch == '\n') {
-		form_driver(form, REQ_VALIDATION);
-		note = new_note(true);
-		char* field_value = NULL;
-		field_value = field_buffer(field[0], 0);
-		note->title = string_is_empty(field_buffer(field[0], 0)) ? NULL : trim_string(field_value);
-		field_value = field_buffer(field[1], 0);
-		note->body = string_is_empty(field_buffer(field[1], 0)) ? NULL : trim_string(field_value);
 	}
 
 	unpost_form(form);
