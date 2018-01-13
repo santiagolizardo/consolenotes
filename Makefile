@@ -1,5 +1,5 @@
 
-CFLAGS=-O3 -g -Wall -pedantic
+CFLAGS=-std=c11 -O3 -g -Wall -pedantic
 OUTPUT=cn
 SOURCES=$(wildcard *.c) $(wildcard vendor/cJSON/cJSON.c)
 MAIN_SOURCES=$(filter-out test_runner.c,$(SOURCES))

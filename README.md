@@ -5,6 +5,12 @@
 
 ![Screenshot](screenshot.png)
 
+Code
+====
+
+- Written in C (std=c11)
+- Dependencies: cJSON, Ncurses, Cunit (Unit tests only)
+
 Usage
 =====
 
