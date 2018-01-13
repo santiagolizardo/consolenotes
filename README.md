@@ -1,4 +1,6 @@
 
+[![Build Status](https://travis-ci.org/santiagolizardo/consolenotes.svg?branch=master)](https://travis-ci.org/santiagolizardo/consolenotes)
+
 **ConsoleNotes** is a simple sticky notes application for terminal lovers. Use it to save tasks, reminders and other useful information in a simple textual/visual way.
 
 ![Screenshot](screenshot.png)

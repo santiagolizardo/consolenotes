@@ -16,6 +16,9 @@ char* uppercase_string(const char * const string) {
 }
 
 bool string_is_empty(const char * string) {
+	if(NULL == string) {
+		return true;
+	}
 	while(*string) {
 		if(*string != ' ') {
 			return false;

@@ -221,6 +221,16 @@ void create_new_note(NoteLink** selected_link, NoteLink** note_list_head, NoteLi
 	}
 }
 
+typedef enum {
+	SORT_MODE_CASCADE = 0,
+	SORT_MODE_MOSAIC,
+	SORT_MODE_RANDOM
+} SortMode;
+
+SortMode show_sort_window(NoteLink* note_link_head) {
+	return SORT_MODE_CASCADE;
+}
+
 int main( int argc, char **argv ) {
 	struct arguments arguments;
 	arguments.list = 0;
@@ -330,6 +340,30 @@ int main( int argc, char **argv ) {
 					archive_current_note(selected_link);
 				}
 				break;
+			case 's': {
+				SortMode sort_mode = show_sort_window(note_list_head);
+				if(sort_mode == SORT_MODE_CASCADE) {
+					NoteLink* a = note_list_head;
+					int xx = 0, yy = 0;
+					while(a) {
+						a->note->window.position.x = xx;
+						a->note->window.position.y = yy;
+						xx += 4;
+						yy += 4;
+						a = a->next;
+					}
+				} else {
+					NoteLink* a = note_list_head;
+					int xx = 0, yy = 0;
+					while(a) {
+						a->note->window.position.x = xx;
+						a->note->window.position.y = yy;
+						xx += 41;
+						yy += 0;
+						a = a->next;
+					}
+				}
+				} break;
 			case 'g':
 				goto_note(&selected_link, note_list_head);
 				break;
