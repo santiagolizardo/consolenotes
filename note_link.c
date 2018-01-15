@@ -17,13 +17,6 @@ void print_all_note_links( const NoteLink* list ) {
 	}
 }
 
-void print_note_link( const NoteLink* link ) {
-	wattron(stdscr,COLOR_PAIR(5));
-	mvprintw( 1, 1, "NoteLink[ prev(%p) next(%p) ]", link->prev, link->next);
-	wrefresh(stdscr);
-	getch();
-}
-
 size_t count_notes(const NoteLink* note_list_head) {
 	size_t count = 0;
 	while(note_list_head) {

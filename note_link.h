@@ -11,7 +11,5 @@ NoteLink* new_note_link( void );
 
 void print_all_note_links( const NoteLink* );
 
-void print_note_link( const NoteLink* );
-
 size_t count_notes(const NoteLink* note_list_head);
 

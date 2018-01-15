@@ -5,6 +5,7 @@
 
 #include "ui.h"
 #include "string_utils.h"
+#include "colors.h"
 
 extern Dimension screen_size;
 
@@ -20,9 +21,9 @@ Note* show_create_window(void) {
 	field[1] = new_field(7, 37, 2, 14, 0, 0);
 	field[2] = NULL;
 
-	set_field_back(field[0], COLOR_PAIR(4) | A_UNDERLINE); 
+	set_field_back(field[0], COLOR_PAIR(COLOR_PAIR_FIELD) | A_UNDERLINE); 
 	field_opts_off(field[0], O_AUTOSKIP);
-	set_field_back(field[1], A_UNDERLINE); 
+	set_field_back(field[1], COLOR_PAIR(COLOR_PAIR_FIELD) | A_UNDERLINE); 
 	field_opts_off(field[1], O_AUTOSKIP);
 
 	form = new_form(field);
@@ -38,8 +39,8 @@ Note* show_create_window(void) {
 
 	box(window, 0, 0);
 	chtype a = getbkgd(window);
-	wbkgd(window, COLOR_PAIR(4));
-	wbkgd(form_win, COLOR_PAIR(4));
+	wbkgd(window, COLOR_PAIR(COLOR_PAIR_FORM));
+	wbkgd(form_win, COLOR_PAIR(COLOR_PAIR_FORM));
 
 	bool quit = false;
 	while(!quit)

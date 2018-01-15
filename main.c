@@ -25,7 +25,7 @@
 
 #include "filesystem.h"
 
-#include "yesno_dialog.h"
+#include "dialogs.h"
 
 #include "json_note.h"
 #include "vendor/cJSON/cJSON.h"
@@ -137,8 +137,8 @@ void goto_note(NoteLink** selected_link_ptr, NoteLink* note_list_head) {
 	field[1] = NULL;
 	set_max_field(field[0], 2);
 	set_field_type(field[0], TYPE_INTEGER, 0, 0, 99);
-	set_field_fore(field[0], COLOR_PAIR(1));
-	set_field_back(field[0], COLOR_PAIR(2));
+	set_field_fore(field[0], COLOR_PAIR(COLOR_PAIR_FIELD_FORE));
+	set_field_back(field[0], COLOR_PAIR(COLOR_PAIR_FIELD));
 
 	form = new_form(field);
 	set_current_field(form, field[0]);
@@ -179,6 +179,8 @@ void goto_note(NoteLink** selected_link_ptr, NoteLink* note_list_head) {
 						first = first->next;
 						count++;
 					}
+				} else {
+					show_information_dialog("Invalid note index");
 				}
 
 				quit = true;
@@ -268,7 +270,7 @@ int main( int argc, char **argv ) {
 	signal(SIGWINCH, resizeHandler);
 
 	getmaxyx(stdscr, screen_size.h, screen_size.w);
-	wbkgd(stdscr, COLOR_PAIR(8));
+	wbkgd(stdscr, COLOR_PAIR(COLOR_PAIR_NO_COLOR));
 
 	bool quit = false;
 
@@ -336,7 +338,7 @@ int main( int argc, char **argv ) {
 				note->toggled = !note->toggled;
 				break;
 			case 'a':
-				if(show_yesno_dialog("Do you really want archive this note?")) {
+				if(show_confirmation_dialog("Do you really want archive this note?")) {
 					archive_current_note(selected_link);
 				}
 				break;
@@ -384,7 +386,7 @@ int main( int argc, char **argv ) {
 				goto_next_note(&selected_link, note_list_head);
 				break;
 			case KEY_DC:
-				if(show_yesno_dialog("Do you really want to delete this note?")) {
+				if(show_confirmation_dialog("Do you really want to delete this note?")) {
 					delete_current_note(selected_link, &note_list_head);
 				}
 				break;

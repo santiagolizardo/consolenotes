@@ -4,6 +4,7 @@
 #include <ncurses.h>
 
 #include "ui.h"
+#include "colors.h"
 
 extern Dimension screen_size;
 
@@ -32,7 +33,7 @@ void show_help_window() {
 
 	WINDOW *window = newwin(win_size.h, win_size.w, 10, (screen_size.w>>1)-(win_size.w>>1));
 	wborder(window, '|', '|', '-', '-', '+', '?', '+', '+' );
-	wbkgd(window, COLOR_PAIR(3));
+	wbkgd(window, COLOR_PAIR(COLOR_PAIR_HELP_DIALOG));
 
 	for(size_t i = 0; i < num_entries; i++) {
 		mvwprintw(window, 2 + i, 2, "%-05s %s", entries[i].shortcut, entries[i].description);

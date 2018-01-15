@@ -5,6 +5,7 @@
 #include <time.h>
 
 #include "string_utils.h"
+#include "colors.h"
 
 extern Dimension screen_size;
 
@@ -24,7 +25,7 @@ void note_window_display( const Note* note ) {
 		return;
 	}
 	werase(note->window.handler);
-	wbkgd(note->window.handler, COLOR_PAIR(note->focused ? 5 : 2));
+	wbkgd(note->window.handler, COLOR_PAIR(note->focused ? COLOR_PAIR_NOTE_FOCUSED : COLOR_PAIR_NOTE_NOT_FOCUSED));
 	size_t title_len = strlen(note->title);
 	char* uppercased_title = uppercase_string(note->title);
 	int centered_x = ( window_size.w >> 1 ) - ( title_len >> 1 );
