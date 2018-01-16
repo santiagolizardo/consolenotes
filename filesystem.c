@@ -5,17 +5,19 @@
 #include <string.h>
 #include <unistd.h>
 
-bool file_exists( const char* filename ) {
-	return access( filename, F_OK ) == 0;	
+bool file_exists(const char * const filename) {
+	return access(filename, F_OK) == 0;
 }
 
-void write_file_content( const char* filename, const char* content ) {
+void write_file_content(const char * const filename, const char * const content) {
 	FILE* file = fopen(filename, "w");
-	fwrite(content, sizeof(char), strlen(content), file);
-	fclose(file);
+	if(file) {
+		fwrite(content, sizeof(char), strlen(content), file);
+		fclose(file);
+	}
 }
 
-char* read_file_content( const char* filename) {
+char* read_file_content(const char * const filename) {
 	char* content = NULL;
 	FILE* file = fopen(filename, "r");
 	if(file) {

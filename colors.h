@@ -12,5 +12,5 @@ enum {
 	COLOR_PAIR_NOTE_NOT_FOCUSED
 };
 
-void init_color_schemes( void );
+void init_color_schemes(void);
 

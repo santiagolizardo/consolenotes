@@ -22,6 +22,7 @@
 #include "help_window.h"
 #include "colors.h"
 #include "input.h"
+#include "sort_window.h"
 
 #include "filesystem.h"
 
@@ -223,20 +224,9 @@ void create_new_note(NoteLink** selected_link, NoteLink** note_list_head, NoteLi
 	}
 }
 
-typedef enum {
-	SORT_MODE_CASCADE = 0,
-	SORT_MODE_MOSAIC,
-	SORT_MODE_RANDOM
-} SortMode;
-
-SortMode show_sort_window(NoteLink* note_link_head) {
-	return SORT_MODE_CASCADE;
-}
-
 int main( int argc, char **argv ) {
 	struct arguments arguments;
 	arguments.list = 0;
-
 	argp_parse(&argp, argc, argv, 0, 0, &arguments);
 
 	srand((unsigned int)time(NULL));
@@ -354,7 +344,7 @@ int main( int argc, char **argv ) {
 						yy += 4;
 						a = a->next;
 					}
-				} else {
+				} else if(sort_mode == SORT_MODE_MOSAIC) {
 					NoteLink* a = note_list_head;
 					int xx = 0, yy = 0;
 					while(a) {
@@ -362,6 +352,15 @@ int main( int argc, char **argv ) {
 						a->note->window.position.y = yy;
 						xx += 41;
 						yy += 0;
+						a = a->next;
+					}
+				} else {
+					NoteLink* a = note_list_head;
+					int xx = 0, yy = 0;
+					while(a) {
+						a->note->window.position.x = xx;
+						a->note->window.position.y = yy;
+						randomize_position(a->note);
 						a = a->next;
 					}
 				}

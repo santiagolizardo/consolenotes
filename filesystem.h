@@ -2,9 +2,9 @@
 
 #include <stdbool.h>
 
-bool file_exists( const char* );
+bool file_exists(const char * const);
 
-void write_file_content( const char*, const char* );
+void write_file_content(const char * const, const char * const);
 
-char* read_file_content( const char* );
+char* read_file_content(const char * const);
 
