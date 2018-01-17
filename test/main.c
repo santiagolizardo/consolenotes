@@ -41,11 +41,11 @@ void test_color_pair_no_color_is_zero() {
 }
 
 void test_file_exists() {
-	CU_ASSERT_TRUE(file_exists("test_runner.c"));
+	CU_ASSERT_TRUE(file_exists("test/main.c"));
 }
 
 void test_file_does_not_exist() {
-	CU_ASSERT_FALSE(file_exists("test_runner.java"));
+	CU_ASSERT_FALSE(file_exists("test/Main.java"));
 }
 
 int main(int argc, char** argv) {

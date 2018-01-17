@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stddef.h>
-#include "vendor/cJSON/cJSON.h"
+#include "cJSON/cJSON.h"
 
 #include "note.h"
 #include "note_ui.h"

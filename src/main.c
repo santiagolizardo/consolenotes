@@ -29,7 +29,7 @@
 #include "dialogs.h"
 
 #include "json_note.h"
-#include "vendor/cJSON/cJSON.h"
+#include "cJSON/cJSON.h"
 
 #define JSON_FILENAME "list.json"
 

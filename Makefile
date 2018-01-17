@@ -1,9 +1,8 @@
 
-CFLAGS=-std=c11 -O3 -g -Wall -pedantic
+CFLAGS=-std=c11 -O3 -g -Wall -pedantic -Iinclude -Ivendor
 OUTPUT=cn
-SOURCES=$(wildcard *.c) $(wildcard vendor/cJSON/cJSON.c)
-MAIN_SOURCES=$(filter-out test_runner.c,$(SOURCES))
-TEST_SOURCES=$(filter-out main.c,$(SOURCES))
+MAIN_SOURCES=$(wildcard src/*.c) $(wildcard vendor/cJSON/cJSON.c)
+TEST_SOURCES=$(filter-out src/main.c,$(MAIN_SOURCES)) $(wildcard test/*.c)
 
 LIBS=-lncurses -lpanel -lmenu -lform -lm
 TEST_LIBS=$(LIBS) -lcunit
@@ -24,8 +23,8 @@ all:
 test:
 	gcc $(CFLAGS) -o test_runner $(TEST_SOURCES) $(TEST_LIBS)
 
-.PHONY: clean
 clean:
 	rm -f $(OUTPUT)
 
+.PHONY: clean test
 
