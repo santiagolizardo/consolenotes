@@ -31,7 +31,7 @@
 #include "json_note.h"
 #include "cJSON/cJSON.h"
 
-#define JSON_FILENAME "list.json"
+#define DEFAULT_JSON_FILENAME "list.json"
 
 const bool print_formatted = true;
 
@@ -44,12 +44,14 @@ static struct argp_option options[] = {
 	{"verbose",  'v', 0,      0,  "Produce verbose output" },
 	{"list",    'l', 0,      0,  "List all the notes" },
 	{"print",   'p', 0,      OPTION_ALIAS },
+	{"filename", 'f', "PATH", 0, "Path to the JSON file with the notes" },
 	{NULL}
 };
 
 
 struct arguments {
-  int list, verbose;
+  bool list, verbose;
+  char *filename;
 };
 
 Dimension screen_size;
@@ -66,11 +68,15 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
 	struct arguments *arguments = state->input;
 
 	switch (key) {
-	case 'p': case 'l':
-		arguments->list = 1;
+	case 'l':
+	case 'p':
+		arguments->list = true;
 		break;
 	case 'v':
-		arguments->verbose = 1;
+		arguments->verbose = true;
+		break;
+	case 'f':
+		arguments->filename = strdup(arg);
 		break;
 	default:
 		return ARGP_ERR_UNKNOWN;
@@ -226,16 +232,20 @@ void create_new_note(NoteLink** selected_link, NoteLink** note_list_head, NoteLi
 
 int main( int argc, char **argv ) {
 	struct arguments arguments;
-	arguments.list = 0;
+	arguments.list = false;
+	arguments.filename = NULL;
 	argp_parse(&argp, argc, argv, 0, 0, &arguments);
+	if(arguments.filename == NULL) {
+		arguments.filename = strdup(DEFAULT_JSON_FILENAME);
+	}
 
 	srand((unsigned int)time(NULL));
 
 	NoteLink* note_list_head = NULL;
 	cJSON* doc = NULL;
 
-	if( file_exists( JSON_FILENAME ) ) {
-		doc = file_to_json(JSON_FILENAME);
+	if( file_exists(arguments.filename) ) {
+		doc = file_to_json(arguments.filename);
 		note_list_head = json_to_list_node(doc);
 		cJSON_Delete(doc);
 	}
@@ -398,8 +408,10 @@ int main( int argc, char **argv ) {
 	char* printable_doc = print_formatted ? cJSON_Print(updated_doc) : cJSON_PrintUnformatted(updated_doc);
 	cJSON_Delete(updated_doc);
 
-	write_file_content(JSON_FILENAME, printable_doc);
+	write_file_content(arguments.filename, printable_doc);
 	free(printable_doc);
+
+	free(arguments.filename);
 
 	return EXIT_SUCCESS;
 }

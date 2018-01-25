@@ -5,6 +5,14 @@
 
 ![Screenshot](screenshot.png)
 
+Features
+========
+
+- Notes stored in JSON format
+- Arrange notes in tiles, cascade or randomly (shuffle)
+- Jump to note
+- Fold/Unfold notes
+
 Code
 ====
 
