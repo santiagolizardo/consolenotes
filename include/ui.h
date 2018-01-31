@@ -8,3 +8,5 @@ typedef struct {
 	unsigned int x, y;
 } Point;
 
+void resize_handler(int sig);
+

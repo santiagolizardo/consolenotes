@@ -1,8 +1,10 @@
 
 CFLAGS=-std=c11 -O3 -g -Wall -pedantic -Iinclude -Ivendor
-OUTPUT=cn
+MAIN_OUTPUT=cn
 MAIN_SOURCES=$(wildcard src/*.c) $(wildcard vendor/cJSON/cJSON.c)
+TEST_OUTPUT=test_runner
 TEST_SOURCES=$(filter-out src/main.c,$(MAIN_SOURCES)) $(wildcard test/*.c)
+
 
 LIBS=-lncurses -lpanel -lmenu -lform -lm
 TEST_LIBS=$(LIBS) -lcunit
@@ -18,13 +20,13 @@ ifneq (, $(filter "$(OSTYPE)", "darwin16" "darwin17"))
 endif
 
 all:
-	gcc $(CFLAGS) -o $(OUTPUT) $(MAIN_SOURCES) $(LIBS)
+	gcc $(CFLAGS) -o $(MAIN_OUTPUT) $(MAIN_SOURCES) $(LIBS)
 
 test:
-	gcc $(CFLAGS) -o test_runner $(TEST_SOURCES) $(TEST_LIBS)
+	gcc $(CFLAGS) -o $(TEST_OUTPUT) $(TEST_SOURCES) $(TEST_LIBS)
 
 clean:
-	rm -f $(OUTPUT)
+	rm -f $(MAIN_OUTPUT) $(TEST_OUTPUT)
 
 .PHONY: clean test
 

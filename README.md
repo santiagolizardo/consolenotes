@@ -12,6 +12,7 @@ Features
 - Arrange notes in tiles, cascade or randomly (shuffle)
 - Jump to note
 - Fold/Unfold notes
+- UTF8 support
 
 Code
 ====

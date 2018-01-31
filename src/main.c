@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include <argp.h>
+#include <locale.h>
 
 #include <ncurses.h>
 #include <unistd.h>
@@ -19,6 +20,7 @@
 #include "note_ui.h"
 #include "note_link.h"
 #include "creation_window.h"
+#include "goto_window.h"
 #include "help_window.h"
 #include "colors.h"
 #include "input.h"
@@ -50,21 +52,15 @@ static struct argp_option options[] = {
 
 
 struct arguments {
-  bool list, verbose;
-  char *filename;
+	bool list, verbose;
+	char *filename;
 };
 
 Dimension screen_size;
 
-void resizeHandler(int sig) {
-	getmaxyx(stdscr, screen_size.h, screen_size.w);
-	wnoutrefresh(stdscr);
-	doupdate();
-}
-
 static error_t parse_opt(int key, char *arg, struct argp_state *state) {
-  /* Get the input argument from argp_parse, which we
-     know is a pointer to our arguments structure. */
+	/* Get the input argument from argp_parse, which we
+	  know is a pointer to our arguments structure. */
 	struct arguments *arguments = state->input;
 
 	switch (key) {
@@ -86,150 +82,6 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
 
 static struct argp argp = { options, parse_opt, NULL, doc };
 
-void archive_current_note(NoteLink* selected_link) {
-	selected_link->note->archived = true;
-}
-
-void delete_current_note(NoteLink* selected_link, NoteLink** note_list_head) {
-	if(selected_link == *note_list_head) {
-		if(selected_link->next) {
-			*note_list_head = selected_link->next;
-		} else {
-			*note_list_head = NULL;
-		}
-		selected_link = NULL;
-		return;
-	}
-	if(selected_link->prev) {
-		selected_link->prev->next = selected_link->next;
-	}
-	if(selected_link->next) {
-		selected_link->next->prev = selected_link->prev;
-	}
-	selected_link = NULL;
-}
-
-void goto_previous_note(NoteLink** selected_link_ptr, NoteLink* note_list_head) {
-	NoteLink* selected_link = *selected_link_ptr;
-	selected_link->note->focused = false;
-	if(selected_link->prev) {
-		selected_link = selected_link->prev;
-	} else {
-		selected_link = note_list_head;
-	}
-	selected_link->note->focused = true;
-}
-
-void goto_next_note(NoteLink** selected_link_ptr, NoteLink* note_list_head) {
-	NoteLink* selected_link = *selected_link_ptr;
-	selected_link->note->focused = false;
-	if(selected_link->next) {
-		selected_link = selected_link->next;
-	} else {
-		selected_link = note_list_head;
-	}
-	selected_link->note->focused = true;
-}
-
-void goto_note(NoteLink** selected_link_ptr, NoteLink* note_list_head) {
-	NoteLink* selected_link = *selected_link_ptr;
-	FIELD *field[2];
-	FORM *form;
-	Dimension win_size;
-	int rows, cols;
-	field[0] = new_field(
-		1, 2, // h, w
-		1, 10, // y, x
-		/* offscreen */ 0, /* nbuffers */ 0);
-	field[1] = NULL;
-	set_max_field(field[0], 2);
-	set_field_type(field[0], TYPE_INTEGER, 0, 0, 99);
-	set_field_fore(field[0], COLOR_PAIR(COLOR_PAIR_FIELD_FORE));
-	set_field_back(field[0], COLOR_PAIR(COLOR_PAIR_FIELD));
-
-	form = new_form(field);
-	set_current_field(form, field[0]);
-	scale_form(form, &rows, &cols);
-    win_size.w = cols + 4;
-    win_size.h = rows + 4;
-
-	WINDOW *window = newwin(win_size.h, win_size.w, 10, (screen_size.w >> 1) - (win_size.w >> 1));
-	WINDOW* form_win = derwin(window, rows, cols, 1, 1);
-	set_form_win(form, window);
-	set_form_sub(form, form_win);
-	bool quit = false;
-	while(!quit)
-	{
-		post_form(form);
-		mvwprintw(window, 2, 2, "Index:" );
-		wrefresh(window);
-		wtimeout(window, 0);
-		int ch = wgetch(window);
-		switch(ch) {
-			case 27:
-				quit = true;
-				break;
-			case '\n':
-				form_driver(form, REQ_VALIDATION);
-				char* field_value = NULL;
-				field_value = strdup(field_buffer(field[0], 0));
-				int index = atoi(field_value);
-				if(index < count_notes(note_list_head)) {
-					selected_link->note->focused = false;
-					NoteLink* first = note_list_head;
-					size_t count = 0;
-					while(first) {
-						first->note->focused = index == count;
-						if(index == count) {
-							selected_link = first;
-						}
-						first = first->next;
-						count++;
-					}
-				} else {
-					show_information_dialog("Invalid note index");
-				}
-
-				quit = true;
-				break;
-			default:
-				form_driver(form, ch);
-				break;
-		}
-	}
-
-	unpost_form(form);
-	free_form(form);
-	free_field(field[0]);
-
-	wclear(window);
-	
-	delwin(window);
-}
-
-void create_new_note(NoteLink** selected_link, NoteLink** note_list_head, NoteLink* note_list_tail) {
-	Note* new_note = show_create_window();
-	if(new_note) {
-		create_note_window(new_note);
-		randomize_position(new_note);
-		
-		NoteLink* new_link = new_note_link();
-		new_link->note = new_note;
-		new_link->note->focused = true;
-		new_link->prev = note_list_tail;
-		if(note_list_tail) {
-			note_list_tail->next = new_link;
-		}
-		if(*selected_link) {
-			(*selected_link)->note->focused = false;
-		}
-		*selected_link = new_link;
-		if(!*note_list_head) {
-			*note_list_head = *selected_link;
-		}
-	}
-}
-
 int main( int argc, char **argv ) {
 	struct arguments arguments;
 	arguments.list = false;
@@ -238,6 +90,8 @@ int main( int argc, char **argv ) {
 	if(arguments.filename == NULL) {
 		arguments.filename = strdup(DEFAULT_JSON_FILENAME);
 	}
+
+	setlocale(LC_ALL, "");
 
 	srand((unsigned int)time(NULL));
 
@@ -267,7 +121,7 @@ int main( int argc, char **argv ) {
 
 	initialize_input();
 
-	signal(SIGWINCH, resizeHandler);
+	signal(SIGWINCH, resize_handler);
 
 	getmaxyx(stdscr, screen_size.h, screen_size.w);
 	wbkgd(stdscr, COLOR_PAIR(COLOR_PAIR_NO_COLOR));
