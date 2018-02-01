@@ -178,10 +178,7 @@ int main( int argc, char **argv ) {
 					}
 				} else {
 					NoteLink* a = note_list_head;
-					int xx = 0, yy = 0;
 					while(a) {
-						a->note->window.position.x = xx;
-						a->note->window.position.y = yy;
 						randomize_position(a->note);
 						a = a->next;
 					}
@@ -205,15 +202,30 @@ int main( int argc, char **argv ) {
 					show_information_dialog("Invalid note index");
 				}
 				} break;
-			case 'c':
-				create_new_note(&selected_link, &note_list_head, note_list_tail);
-				break;
+			case 'c': {
+				Note* new_note = show_create_window();
+				if(new_note) {
+					create_note_window(new_note);
+					randomize_position(new_note);
+					
+					NoteLink* new_link = new_note_link();
+					new_link->note = new_note;
+					new_link->note->focused = true;
+					new_link->prev = note_list_tail;
+					if(note_list_tail) {
+						note_list_tail->next = new_link;
+					}
+					if(selected_link) {
+						selected_link->note->focused = false;
+					}
+					selected_link = new_link;
+					if(!note_list_head) {
+						note_list_head = selected_link;
+					}
+				}
+				} break;
 			case '?':
 				show_help_window();
-				break;
-			case 'q':
-			case 27:
-				quit = true;
 				break;
 			case KEY_PPAGE:
 				goto_previous_note(&selected_link, note_list_head);
@@ -225,6 +237,10 @@ int main( int argc, char **argv ) {
 				if(show_confirmation_dialog("Do you really want to delete this note?")) {
 					delete_current_note(selected_link, &note_list_head);
 				}
+				break;
+			case 'q':
+			case 27:
+				quit = true;
 				break;
 		}
 	}

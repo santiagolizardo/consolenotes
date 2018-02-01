@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <form.h>
 #include <string.h>
+#include <stdint.h>
 
 #include "colors.h"
 #include "ui.h"

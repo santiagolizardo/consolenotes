@@ -10,29 +10,6 @@
 
 extern Dimension screen_size;
 
-void create_new_note(NoteLink** selected_link, NoteLink** note_list_head, NoteLink* note_list_tail) {
-	Note* new_note = show_create_window();
-	if(new_note) {
-		create_note_window(new_note);
-		randomize_position(new_note);
-		
-		NoteLink* new_link = new_note_link();
-		new_link->note = new_note;
-		new_link->note->focused = true;
-		new_link->prev = note_list_tail;
-		if(note_list_tail) {
-			note_list_tail->next = new_link;
-		}
-		if(*selected_link) {
-			(*selected_link)->note->focused = false;
-		}
-		*selected_link = new_link;
-		if(!*note_list_head) {
-			*note_list_head = *selected_link;
-		}
-	}
-}
-
 Note* show_create_window(void) {
 	Note* note = NULL;
 	Dimension win_size;
