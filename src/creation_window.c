@@ -6,6 +6,7 @@
 #include "ui.h"
 #include "string_utils.h"
 #include "colors.h"
+#include "note_ui.h"
 
 extern Dimension screen_size;
 

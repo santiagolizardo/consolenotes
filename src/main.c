@@ -1,6 +1,5 @@
 #include <stdlib.h>
 
-#include <argp.h>
 #include <locale.h>
 
 #include <ncurses.h>
@@ -33,54 +32,13 @@
 #include "json_note.h"
 #include "cJSON/cJSON.h"
 
+#include "arguments.h"
+
 #define DEFAULT_JSON_FILENAME "list.json"
 
 const bool print_formatted = true;
 
-const char *argp_program_version = "ConsoleNotes 1.0.0";
-const char *argp_program_bug_address = "https://github.com/santiagolizardo/consolenotes/";
-
-static char doc[] = "ConsoleNotes is a simple program to manage and display sticky notes on the terminal";
-
-static struct argp_option options[] = {
-	{"verbose",  'v', 0,      0,  "Produce verbose output" },
-	{"list",    'l', 0,      0,  "List all the notes" },
-	{"print",   'p', 0,      OPTION_ALIAS },
-	{"filename", 'f', "PATH", 0, "Path to the JSON file with the notes" },
-	{NULL}
-};
-
-
-struct arguments {
-	bool list, verbose;
-	char *filename;
-};
-
 Dimension screen_size;
-
-static error_t parse_opt(int key, char *arg, struct argp_state *state) {
-	/* Get the input argument from argp_parse, which we
-	  know is a pointer to our arguments structure. */
-	struct arguments *arguments = state->input;
-
-	switch (key) {
-	case 'l':
-	case 'p':
-		arguments->list = true;
-		break;
-	case 'v':
-		arguments->verbose = true;
-		break;
-	case 'f':
-		arguments->filename = strdup(arg);
-		break;
-	default:
-		return ARGP_ERR_UNKNOWN;
-	}
-	return 0;
-}
-
-static struct argp argp = { options, parse_opt, NULL, doc };
 
 int main( int argc, char **argv ) {
 	struct arguments arguments;
@@ -229,9 +187,24 @@ int main( int argc, char **argv ) {
 					}
 				}
 				} break;
-			case 'g':
-				goto_note(&selected_link, note_list_head);
-				break;
+			case 'g': {
+				size_t index = show_goto_window();
+				if(index < count_notes(note_list_head)) {
+					selected_link->note->focused = false;
+					NoteLink* first = note_list_head;
+					size_t count = 0;
+					while(first) {
+						first->note->focused = index == count;
+						if(index == count) {
+							selected_link = first;
+						}
+						first = first->next;
+						count++;
+					}
+				} else {
+					show_information_dialog("Invalid note index");
+				}
+				} break;
 			case 'c':
 				create_new_note(&selected_link, &note_list_head, note_list_tail);
 				break;

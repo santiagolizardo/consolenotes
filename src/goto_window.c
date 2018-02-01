@@ -10,8 +10,9 @@
 
 extern Dimension screen_size;
 
-void goto_note(NoteLink** selected_link_ptr, NoteLink* note_list_head) {
-	NoteLink* selected_link = *selected_link_ptr;
+size_t show_goto_window() {
+	size_t index = SIZE_MAX;
+
 	FIELD *field[2];
 	FORM *form;
 	Dimension win_size;
@@ -52,23 +53,7 @@ void goto_note(NoteLink** selected_link_ptr, NoteLink* note_list_head) {
 				form_driver(form, REQ_VALIDATION);
 				char* field_value = NULL;
 				field_value = strdup(field_buffer(field[0], 0));
-				int index = atoi(field_value);
-				if(index < count_notes(note_list_head)) {
-					selected_link->note->focused = false;
-					NoteLink* first = note_list_head;
-					size_t count = 0;
-					while(first) {
-						first->note->focused = index == count;
-						if(index == count) {
-							selected_link = first;
-						}
-						first = first->next;
-						count++;
-					}
-				} else {
-					show_information_dialog("Invalid note index");
-				}
-
+				index = atoi(field_value);
 				quit = true;
 				break;
 			default:
@@ -84,5 +69,7 @@ void goto_note(NoteLink** selected_link_ptr, NoteLink* note_list_head) {
 	wclear(window);
 	
 	delwin(window);
+
+	return index;
 }
 
