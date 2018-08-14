@@ -1,5 +1,5 @@
 
-CFLAGS=-std=c11 -O3 -g -Wall -pedantic -Iinclude -Ivendor
+CFLAGS=-std=c11 -O3 -g -Wall -Wextra -Wpedantic -Iinclude -Ivendor
 MAIN_OUTPUT=cn
 MAIN_SOURCES=$(wildcard src/*.c) $(wildcard vendor/cJSON/cJSON.c)
 TEST_OUTPUT=test_runner

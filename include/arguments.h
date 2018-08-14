@@ -8,11 +8,11 @@ const char *argp_program_bug_address = "https://github.com/santiagolizardo/conso
 static char doc[] = "ConsoleNotes is a simple program to manage and display sticky notes on the terminal";
 
 static struct argp_option options[] = {
-	{"verbose",  'v', 0,      0,  "Produce verbose output" },
-	{"list",    'l', 0,      0,  "List all the notes" },
-	{"print",   'p', 0,      OPTION_ALIAS },
-	{"filename", 'f', "PATH", 0, "Path to the JSON file with the notes" },
-	{NULL}
+	{"verbose",  'v', 0,      0,  "Produce verbose output", 0},
+	{"list",    'l', 0,      0,  "List all the notes", 0},
+	{"print",   'p', 0,      OPTION_ALIAS, NULL, 0},
+	{"filename", 'f', "PATH", 0, "Path to the JSON file with the notes", 0},
+	{NULL, 0, NULL, 0, NULL, 0}
 };
 
 struct arguments {
@@ -42,6 +42,6 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
 	return 0;
 }
 
-static struct argp argp = { options, parse_opt, NULL, doc };
+static struct argp argp = {options, parse_opt, NULL, doc, NULL, NULL, NULL};
 
 

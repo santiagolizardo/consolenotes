@@ -4,7 +4,7 @@
 
 extern Dimension screen_size;
 
-void resize_handler(int sig) {
+void resize_handler() {
 	getmaxyx(stdscr, screen_size.h, screen_size.w);
 	wnoutrefresh(stdscr);
 	doupdate();
