@@ -5,3 +5,4 @@ list.json
 *.dSYM
 notes.json
 test_runner
+*.swp
