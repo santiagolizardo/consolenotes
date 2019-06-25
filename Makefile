@@ -1,10 +1,9 @@
 
-CFLAGS=-std=c11 -O3 -g -Wall -Wextra -Wpedantic -Iinclude -Ivendor
+CFLAGS=-std=c11 -O3 -g -Wall -Wextra -Wpedantic -Iinclude -Ivendor -D_POSIX_C_SOURCE=200809L
 MAIN_OUTPUT=cn
 MAIN_SOURCES=$(wildcard src/*.c) $(wildcard vendor/cJSON/cJSON.c)
 TEST_OUTPUT=test_runner
 TEST_SOURCES=$(filter-out src/main.c,$(MAIN_SOURCES)) $(wildcard test/*.c)
-
 
 LIBS=-lncurses -lpanel -lmenu -lform -lm
 TEST_LIBS=$(LIBS) -lcunit
