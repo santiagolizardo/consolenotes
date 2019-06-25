@@ -18,7 +18,17 @@ Code
 ====
 
 - Written in C (std=c11)
-- Dependencies: cJSON, Ncurses, Cunit (Unit tests only)
+- Dependencies: Make, cJSON, Ncurses5, Cunit (Unit tests only)
+
+Build
+=====
+
+```sh
+$ git clone <repo>
+$ git submodule update --init
+$ make
+$ ./cn
+```
 
 Usage
 =====
