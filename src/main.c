@@ -234,7 +234,7 @@ int main( int argc, char **argv ) {
 				goto_next_note(&selected_link, note_list_head);
 				break;
 			case KEY_DC:
-				if(show_confirmation_dialog("Do you really want to delete this note?")) {
+				if(selected_link && show_confirmation_dialog("Do you really want to delete this note?")) {
 					delete_current_note(selected_link, &note_list_head);
 				}
 				break;

@@ -1,6 +1,7 @@
 #include "note_link.h"
 
 #include <stdlib.h>
+#include <assert.h>
 
 NoteLink* new_note_link( void ) {
 	NoteLink* note_link = (NoteLink*)malloc(sizeof(NoteLink));
@@ -53,6 +54,8 @@ void archive_current_note(NoteLink* selected_link) {
 }
 
 void delete_current_note(NoteLink* selected_link, NoteLink** note_list_head) {
+	assert(selected_link != NULL);
+
 	if(selected_link == *note_list_head) {
 		if(selected_link->next) {
 			*note_list_head = selected_link->next;
