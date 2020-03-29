@@ -96,6 +96,10 @@ int main( int argc, char **argv ) {
 		werase(stdscr);
 		wnoutrefresh(stdscr);
 		
+		if(count_notes(note_list_head) == 0) {
+			show_information_dialog("Your board is empty. Type 'c' to create your first note.");
+		}
+		
 		NoteLink* link = note_list_head;
 		NoteLink* note_list_tail = link;
 		Note* note = NULL; 
