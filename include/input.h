@@ -1,4 +1,3 @@
 #pragma once
 
-void initialize_input( void );
-
+void initialize_input(void);

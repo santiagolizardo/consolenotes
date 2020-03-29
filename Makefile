@@ -27,5 +27,8 @@ test:
 clean:
 	rm -f $(MAIN_OUTPUT) $(TEST_OUTPUT)
 
+format:
+	clang-format -i --sort-includes src/*.c include/*.h
+
 .PHONY: clean test
 
