@@ -48,7 +48,7 @@ void test_file_does_not_exist() {
 	CU_ASSERT_FALSE(file_exists("test/Main.java"));
 }
 
-int main(int argc, char** argv) {
+int main() {
 	if(CUE_SUCCESS != CU_initialize_registry()) {
 		return CU_get_error();
 	}

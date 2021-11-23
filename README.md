@@ -23,11 +23,11 @@ Code
 Build
 =====
 
-```sh
-$ git clone <repo>
-$ git submodule update --init
-$ make
-$ ./cn
+```shell
+git clone --recurse-submodules https://github.com/santiagolizardo/consolenotes.git
+cd consolenotes
+make
+make run
 ```
 
 Usage

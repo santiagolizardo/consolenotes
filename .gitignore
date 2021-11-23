@@ -6,3 +6,5 @@ list.json
 notes.json
 test_runner
 *.swp
+tags
+tags.*

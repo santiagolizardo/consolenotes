@@ -21,6 +21,9 @@ endif
 all:
 	gcc $(CFLAGS) -o $(MAIN_OUTPUT) $(MAIN_SOURCES) $(LIBS)
 
+run: all
+	./$(MAIN_OUTPUT)
+
 test:
 	gcc $(CFLAGS) -o $(TEST_OUTPUT) $(TEST_SOURCES) $(TEST_LIBS)
 
@@ -30,5 +33,5 @@ clean:
 format:
 	clang-format -i --sort-includes src/*.c include/*.h
 
-.PHONY: clean test
+.PHONY: clean run test
 
