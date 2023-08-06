@@ -17,7 +17,7 @@ Features
 Code
 ====
 
-- Written in C (std=c11)
+- Written in C (std=c17)
 - Dependencies: Make, cJSON, Ncurses5, Cunit (Unit tests only)
 
 Build

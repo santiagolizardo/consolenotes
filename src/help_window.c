@@ -34,7 +34,7 @@ void show_help_window() {
   wbkgd(window, COLOR_PAIR(COLOR_PAIR_HELP_DIALOG));
 
   for (size_t i = 0; i < num_entries; i++) {
-    mvwprintw(window, 2 + i, 2, "%-05s %s", entries[i].shortcut,
+    mvwprintw(window, 2 + i, 2, "%-5s %s", entries[i].shortcut,
               entries[i].description);
   }
   wrefresh(window);

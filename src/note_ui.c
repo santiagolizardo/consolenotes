@@ -48,6 +48,6 @@ void note_window_display(const Note *note) {
 
   mvwin(note->window.handler, note->window.position.y, note->window.position.x);
   box(note->window.handler, 0, 0);
-  mvwprintw(note->window.handler, 0, 0, "#%d", note->index);
+  mvwprintw(note->window.handler, 0, 0, "#%ld", note->index);
   wnoutrefresh(note->window.handler);
 }
