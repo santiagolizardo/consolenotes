@@ -35,7 +35,7 @@ void note_window_display(const Note *note) {
   int centered_x = (window_size.w >> 1) - (title_len >> 1);
 
   wattron(note->window.handler, A_BOLD | A_UNDERLINE);
-  mvwprintw(note->window.handler, 1, centered_x, uppercased_title);
+  mvwprintw(note->window.handler, 1, centered_x, "%s", uppercased_title);
   wattroff(note->window.handler, A_BOLD | A_UNDERLINE);
   free(uppercased_title);
 
@@ -43,7 +43,7 @@ void note_window_display(const Note *note) {
     wresize(note->window.handler, 3, window_size.w);
   } else {
     wresize(note->window.handler, window_size.h, window_size.w);
-    mvwprintw(note->window.handler, 3, 2, note->body);
+    mvwprintw(note->window.handler, 3, 2, "%s", note->body);
   }
 
   mvwin(note->window.handler, note->window.position.y, note->window.position.x);

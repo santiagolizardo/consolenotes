@@ -19,7 +19,7 @@ bool show_confirmation_dialog(const char *const message) {
   box(window, 0, 0);
   wbkgd(window, COLOR_PAIR(COLOR_PAIR_CONFIRMATION_DIALOG));
 
-  mvwprintw(window, 2, 2, message);
+  mvwprintw(window, 2, 2, "%s", message);
   wrefresh(window);
   wtimeout(window, 0);
   int ch = getch();
@@ -40,7 +40,7 @@ void show_information_dialog(const char *const message) {
   box(window, 0, 0);
   wbkgd(window, COLOR_PAIR(COLOR_PAIR_INFORMATION_DIALOG));
 
-  mvwprintw(window, 2, 2, message);
+  mvwprintw(window, 2, 2, "%s", message);
   wrefresh(window);
   wtimeout(window, 0);
   getch();
