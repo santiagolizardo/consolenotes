@@ -160,7 +160,7 @@ int main(int argc, char **argv) {
       }
       break;
     case 's': {
-      SortMode sort_mode = show_sort_window(note_list_head);
+      SortMode sort_mode = show_sort_window();
       if (sort_mode == SORT_MODE_CASCADE) {
         NoteLink *a = note_list_head;
         int xx = 0, yy = 0;

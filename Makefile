@@ -1,5 +1,5 @@
 
-CFLAGS=-std=c17 -O3 -g -Wall -Wextra -Wpedantic -Iinclude -Ivendor -D_POSIX_C_SOURCE=200809L
+CFLAGS=-std=c23 -O3 -g -Wall -Wextra -Wpedantic -Iinclude -Ivendor -D_POSIX_C_SOURCE=200809L
 MAIN_OUTPUT=cn
 MAIN_SOURCES=$(wildcard src/*.c) $(wildcard vendor/cJSON/cJSON.c)
 TEST_OUTPUT=test_runner

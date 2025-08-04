@@ -8,8 +8,10 @@
 
 extern Dimension screen_size;
 
-void show_help_window() {
-  const struct {
+void show_help_window()
+{
+  const struct
+  {
     const char shortcut[5];
     const char description[50];
   } entries[10] = {
@@ -30,10 +32,11 @@ void show_help_window() {
 
   WINDOW *window = newwin(win_size.h, win_size.w, 10,
                           (screen_size.w >> 1) - (win_size.w >> 1));
-  wborder(window, '|', '|', '-', '-', '+', '?', '+', '+');
+  wborder(window, 0, 0, '?', 0, 0, 0, 0, 0);
   wbkgd(window, COLOR_PAIR(COLOR_PAIR_HELP_DIALOG));
 
-  for (size_t i = 0; i < num_entries; i++) {
+  for (size_t i = 0; i < num_entries; i++)
+  {
     mvwprintw(window, 2 + i, 2, "%-5s %s", entries[i].shortcut,
               entries[i].description);
   }
